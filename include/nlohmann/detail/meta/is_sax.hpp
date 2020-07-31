@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cstdint> // size_t
-#include <utility> // declval
-#include <string> // string
+#include <cstdint>  // size_t
+#include <string>   // string
+#include <utility>  // declval
 
 #include <nlohmann/detail/meta/detected.hpp>
 #include <nlohmann/detail/meta/type_traits.hpp>
@@ -28,7 +28,8 @@ using number_unsigned_function_t =
 
 template<typename T, typename Float, typename String>
 using number_float_function_t = decltype(std::declval<T&>().number_float(
-                                    std::declval<Float>(), std::declval<const String&>()));
+    std::declval<Float>(),
+    std::declval<const String&>()));
 
 template<typename T, typename String>
 using string_function_t =
@@ -58,8 +59,9 @@ using end_array_function_t = decltype(std::declval<T&>().end_array());
 
 template<typename T, typename Exception>
 using parse_error_function_t = decltype(std::declval<T&>().parse_error(
-        std::declval<std::size_t>(), std::declval<const std::string&>(),
-        std::declval<const Exception&>()));
+    std::declval<std::size_t>(),
+    std::declval<const std::string&>(),
+    std::declval<const Exception&>()));
 
 template<typename SAX, typename BasicJsonType>
 struct is_sax
@@ -114,15 +116,12 @@ struct is_sax_static_asserts
     static_assert(is_detected_exact<bool, boolean_function_t, SAX>::value,
                   "Missing/invalid function: bool boolean(bool)");
     static_assert(
-        is_detected_exact<bool, number_integer_function_t, SAX,
-        number_integer_t>::value,
+        is_detected_exact<bool, number_integer_function_t, SAX, number_integer_t>::value,
         "Missing/invalid function: bool number_integer(number_integer_t)");
     static_assert(
-        is_detected_exact<bool, number_unsigned_function_t, SAX,
-        number_unsigned_t>::value,
+        is_detected_exact<bool, number_unsigned_function_t, SAX, number_unsigned_t>::value,
         "Missing/invalid function: bool number_unsigned(number_unsigned_t)");
-    static_assert(is_detected_exact<bool, number_float_function_t, SAX,
-                  number_float_t, string_t>::value,
+    static_assert(is_detected_exact<bool, number_float_function_t, SAX, number_float_t, string_t>::value,
                   "Missing/invalid function: bool number_float(number_float_t, const string_t&)");
     static_assert(
         is_detected_exact<bool, string_function_t, SAX, string_t>::value,

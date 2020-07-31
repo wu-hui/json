@@ -11,9 +11,9 @@ passed byte array.
 Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 */
 
-#include <vector>    // for vector
 #include <cstdint>   // for uint8_t
 #include <iostream>  // for cin
+#include <vector>    // for vector
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size);
 

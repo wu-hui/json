@@ -812,8 +812,7 @@ TEST_CASE("element access 2")
             SECTION("existing element")
             {
                 for (auto key :
-                        {"integer", "unsigned", "floating", "null", "string", "boolean", "object", "array"
-                        })
+                     {"integer", "unsigned", "floating", "null", "string", "boolean", "object", "array"})
                 {
                     CHECK(j.find(key) != j.end());
                     CHECK(*j.find(key) == j.at(key));
@@ -901,8 +900,7 @@ TEST_CASE("element access 2")
             SECTION("existing element")
             {
                 for (auto key :
-                        {"integer", "unsigned", "floating", "null", "string", "boolean", "object", "array"
-                        })
+                     {"integer", "unsigned", "floating", "null", "string", "boolean", "object", "array"})
                 {
                     CHECK(j.count(key) == 1);
                     CHECK(j_const.count(key) == 1);
@@ -988,8 +986,7 @@ TEST_CASE("element access 2")
             SECTION("existing element")
             {
                 for (auto key :
-                        {"integer", "unsigned", "floating", "null", "string", "boolean", "object", "array"
-                        })
+                     {"integer", "unsigned", "floating", "null", "string", "boolean", "object", "array"})
                 {
                     CHECK(j.contains(key) == true);
                     CHECK(j_const.contains(key) == true);

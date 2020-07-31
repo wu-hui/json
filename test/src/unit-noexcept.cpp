@@ -39,8 +39,10 @@ enum test
 {
 };
 
-struct pod {};
-struct pod_bis {};
+struct pod
+{};
+struct pod_bis
+{};
 
 void to_json(json&, pod) noexcept;
 void to_json(json&, pod_bis);
@@ -66,7 +68,7 @@ static_assert(noexcept(json(pod{})), "");
 static_assert(noexcept(j->get<pod>()), "");
 static_assert(!noexcept(j->get<pod_bis>()), "");
 static_assert(noexcept(json(pod{})), "");
-}
+}  // namespace
 
 TEST_CASE("runtime checks")
 {

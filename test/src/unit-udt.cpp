@@ -34,8 +34,8 @@ using nlohmann::json;
 
 #include <array>
 #include <map>
-#include <string>
 #include <memory>
+#include <string>
 
 namespace udt
 {
@@ -49,19 +49,25 @@ enum class country
 struct age
 {
     int m_val;
-    age(int rhs = 0) : m_val(rhs) {}
+    age(int rhs = 0)
+      : m_val(rhs)
+    {}
 };
 
 struct name
 {
     std::string m_val;
-    name(const std::string rhs = "") : m_val(rhs) {}
+    name(const std::string rhs = "")
+      : m_val(rhs)
+    {}
 };
 
 struct address
 {
     std::string m_val;
-    address(const std::string rhs = "") : m_val(rhs) {}
+    address(const std::string rhs = "")
+      : m_val(rhs)
+    {}
 };
 
 struct person
@@ -69,44 +75,64 @@ struct person
     age m_age;
     name m_name;
     country m_country;
-    person() : m_age(), m_name(), m_country() {}
-    person(const age& a, const name& n, const country& c) : m_age(a), m_name(n), m_country(c) {}
+    person()
+      : m_age()
+      , m_name()
+      , m_country()
+    {}
+    person(const age& a, const name& n, const country& c)
+      : m_age(a)
+      , m_name(n)
+      , m_country(c)
+    {}
 };
 
 struct contact
 {
     person m_person;
     address m_address;
-    contact() : m_person(), m_address() {}
-    contact(const person& p, const address& a) : m_person(p), m_address(a) {}
+    contact()
+      : m_person()
+      , m_address()
+    {}
+    contact(const person& p, const address& a)
+      : m_person(p)
+      , m_address(a)
+    {}
 };
 
 struct contact_book
 {
     name m_book_name;
     std::vector<contact> m_contacts;
-    contact_book() : m_book_name(), m_contacts() {}
-    contact_book(const name& n, const std::vector<contact>& c) : m_book_name(n), m_contacts(c) {}
+    contact_book()
+      : m_book_name()
+      , m_contacts()
+    {}
+    contact_book(const name& n, const std::vector<contact>& c)
+      : m_book_name(n)
+      , m_contacts(c)
+    {}
 };
-}
+}  // namespace udt
 
 // to_json methods
 namespace udt
 {
 // templates because of the custom_json tests (see below)
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void to_json(BasicJsonType& j, age a)
 {
     j = a.m_val;
 }
 
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void to_json(BasicJsonType& j, const name& n)
 {
     j = n.m_val;
 }
 
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void to_json(BasicJsonType& j, country c)
 {
     switch (c)
@@ -125,7 +151,7 @@ static void to_json(BasicJsonType& j, country c)
     }
 }
 
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void to_json(BasicJsonType& j, const person& p)
 {
     j = BasicJsonType{{"age", p.m_age}, {"name", p.m_name}, {"country", p.m_country}};
@@ -178,40 +204,39 @@ static bool operator==(const contact_book& lhs, const contact_book& rhs)
     return std::tie(lhs.m_book_name, lhs.m_contacts) ==
            std::tie(rhs.m_book_name, rhs.m_contacts);
 }
-}
+}  // namespace udt
 
 // from_json methods
 namespace udt
 {
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void from_json(const BasicJsonType& j, age& a)
 {
     a.m_val = j.template get<int>();
 }
 
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void from_json(const BasicJsonType& j, name& n)
 {
     n.m_val = j.template get<std::string>();
 }
 
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void from_json(const BasicJsonType& j, country& c)
 {
     const auto str = j.template get<std::string>();
     static const std::map<std::string, country> m =
-    {
-        {u8"中华人民共和国", country::china},
-        {"France", country::france},
-        {u8"Российская Федерация", country::russia}
-    };
+        {
+            {u8"中华人民共和国", country::china},
+            {"France", country::france},
+            {u8"Российская Федерация", country::russia}};
 
     const auto it = m.find(str);
     // TODO test exceptions
     c = it->second;
 }
 
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void from_json(const BasicJsonType& j, person& p)
 {
     p.m_age = j["age"].template get<age>();
@@ -235,16 +260,13 @@ static void from_json(const nlohmann::json& j, contact_book& cb)
     cb.m_book_name = j["name"].get<name>();
     cb.m_contacts = j["contacts"].get<std::vector<contact>>();
 }
-}
+}  // namespace udt
 
 TEST_CASE("basic usage" * doctest::test_suite("udt"))
 {
-
     // a bit narcissistic maybe :) ?
-    const udt::age a
-    {
-        23
-    };
+    const udt::age a{
+        23};
     const udt::name n{"theo"};
     const udt::country c{udt::country::france};
     const udt::person sfinae_addict{a, n, c};
@@ -266,7 +288,6 @@ TEST_CASE("basic usage" * doctest::test_suite("udt"))
         CHECK(
             json(book) ==
             u8R"({"name":"C++", "contacts" : [{"person" : {"age":23, "name":"theo", "country":"France"}, "address":"Paris"}, {"person" : {"age":42, "country":"中华人民共和国", "name":"王芳"}, "address":"Paris"}]})"_json);
-
     }
 
     SECTION("conversion from json via free-functions")
@@ -345,14 +366,18 @@ namespace udt
 struct legacy_type
 {
     std::string number;
-    legacy_type() : number() {}
-    legacy_type(const std::string& n) : number(n) {}
+    legacy_type()
+      : number()
+    {}
+    legacy_type(const std::string& n)
+      : number(n)
+    {}
 };
-}
+}  // namespace udt
 
 namespace nlohmann
 {
-template <typename T>
+template<typename T>
 struct adl_serializer<std::shared_ptr<T>>
 {
     static void to_json(json& j, const std::shared_ptr<T>& opt)
@@ -380,7 +405,7 @@ struct adl_serializer<std::shared_ptr<T>>
     }
 };
 
-template <>
+template<>
 struct adl_serializer<udt::legacy_type>
 {
     static void to_json(json& j, const udt::legacy_type& l)
@@ -393,7 +418,7 @@ struct adl_serializer<udt::legacy_type>
         l.number = std::to_string(j.get<int>());
     }
 };
-}
+}  // namespace nlohmann
 
 TEST_CASE("adl_serializer specialization" * doctest::test_suite("udt"))
 {
@@ -449,7 +474,7 @@ TEST_CASE("adl_serializer specialization" * doctest::test_suite("udt"))
 
 namespace nlohmann
 {
-template <>
+template<>
 struct adl_serializer<std::vector<float>>
 {
     using type = std::vector<float>;
@@ -469,20 +494,20 @@ struct adl_serializer<std::vector<float>>
         return {4.0, 5.0, 6.0};
     }
 };
-}
+}  // namespace nlohmann
 
 TEST_CASE("even supported types can be specialized" * doctest::test_suite("udt"))
 {
-    json j = std::vector<float> {1.0, 2.0, 3.0};
+    json j = std::vector<float>{1.0, 2.0, 3.0};
     CHECK(j.dump() == R"("hijacked!")");
     auto f = j.get<std::vector<float>>();
     // the single argument from_json method is preferred
-    CHECK((f == std::vector<float> {4.0, 5.0, 6.0}));
+    CHECK((f == std::vector<float>{4.0, 5.0, 6.0}));
 }
 
 namespace nlohmann
 {
-template <typename T>
+template<typename T>
 struct adl_serializer<std::unique_ptr<T>>
 {
     static void to_json(json& j, const std::unique_ptr<T>& opt)
@@ -510,7 +535,7 @@ struct adl_serializer<std::unique_ptr<T>>
         }
     }
 };
-}
+}  // namespace nlohmann
 
 TEST_CASE("Non-copyable types" * doctest::test_suite("udt"))
 {
@@ -546,14 +571,16 @@ TEST_CASE("Non-copyable types" * doctest::test_suite("udt"))
 // custom serializer - advanced usage
 // pack structs that are pod-types (but not scalar types)
 // relies on adl for any other type
-template <typename T, typename = void>
+template<typename T, typename = void>
 struct pod_serializer
 {
     // use adl for non-pods, or scalar types
-    template <
-        typename BasicJsonType, typename U = T,
-        typename std::enable_if <
-            !(std::is_pod<U>::value && std::is_class<U>::value), int >::type = 0 >
+    template<
+        typename BasicJsonType,
+        typename U = T,
+        typename std::enable_if<
+            !(std::is_pod<U>::value && std::is_class<U>::value),
+            int>::type = 0>
     static void from_json(const BasicJsonType& j, U& t)
     {
         using nlohmann::from_json;
@@ -561,10 +588,8 @@ struct pod_serializer
     }
 
     // special behaviour for pods
-    template < typename BasicJsonType, typename U = T,
-               typename std::enable_if <
-                   std::is_pod<U>::value && std::is_class<U>::value, int >::type = 0 >
-    static void from_json(const  BasicJsonType& j, U& t)
+    template<typename BasicJsonType, typename U = T, typename std::enable_if<std::is_pod<U>::value && std::is_class<U>::value, int>::type = 0>
+    static void from_json(const BasicJsonType& j, U& t)
     {
         std::uint64_t value;
         // TODO The following block is no longer relevant in this serializer, make another one that shows the issue
@@ -586,22 +611,22 @@ struct pod_serializer
         std::memcpy(&t, bytes, sizeof(value));
     }
 
-    template <
-        typename BasicJsonType, typename U = T,
-        typename std::enable_if <
-            !(std::is_pod<U>::value && std::is_class<U>::value), int >::type = 0 >
-    static void to_json(BasicJsonType& j, const  T& t)
+    template<
+        typename BasicJsonType,
+        typename U = T,
+        typename std::enable_if<
+            !(std::is_pod<U>::value && std::is_class<U>::value),
+            int>::type = 0>
+    static void to_json(BasicJsonType& j, const T& t)
     {
         using nlohmann::to_json;
         to_json(j, t);
     }
 
-    template < typename BasicJsonType, typename U = T,
-               typename std::enable_if <
-                   std::is_pod<U>::value && std::is_class<U>::value, int >::type = 0 >
-    static void to_json(BasicJsonType& j, const  T& t) noexcept
+    template<typename BasicJsonType, typename U = T, typename std::enable_if<std::is_pod<U>::value && std::is_class<U>::value, int>::type = 0>
+    static void to_json(BasicJsonType& j, const T& t) noexcept
     {
-        auto bytes = static_cast< const unsigned char*>(static_cast<const void*>(&t));
+        auto bytes = static_cast<const unsigned char*>(static_cast<const void*>(&t));
         std::uint64_t value;
         std::memcpy(&value, bytes, sizeof(value));
         nlohmann::to_json(j, value);
@@ -620,17 +645,21 @@ struct small_pod
 struct non_pod
 {
     std::string s;
-    non_pod() : s() {}
-    non_pod(const std::string& S) : s(S) {}
+    non_pod()
+      : s()
+    {}
+    non_pod(const std::string& S)
+      : s(S)
+    {}
 };
 
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void to_json(BasicJsonType& j, const non_pod& np)
 {
     j = np.s;
 }
 
-template <typename BasicJsonType>
+template<typename BasicJsonType>
 static void from_json(const BasicJsonType& j, non_pod& np)
 {
     np.s = j.template get<std::string>();
@@ -642,7 +671,7 @@ static bool operator==(small_pod lhs, small_pod rhs) noexcept
            std::tie(rhs.begin, rhs.middle, rhs.end);
 }
 
-static bool operator==(const  non_pod& lhs, const  non_pod& rhs) noexcept
+static bool operator==(const non_pod& lhs, const non_pod& rhs) noexcept
 {
     return lhs.s == rhs.s;
 }
@@ -651,13 +680,12 @@ static std::ostream& operator<<(std::ostream& os, small_pod l)
 {
     return os << "begin: " << l.begin << ", middle: " << l.middle << ", end: " << l.end;
 }
-}
+}  // namespace udt
 
 TEST_CASE("custom serializer for pods" * doctest::test_suite("udt"))
 {
     using custom_json =
-        nlohmann::basic_json<std::map, std::vector, std::string, bool,
-        std::int64_t, std::uint64_t, double, std::allocator, pod_serializer>;
+        nlohmann::basic_json<std::map, std::vector, std::string, bool, std::int64_t, std::uint64_t, double, std::allocator, pod_serializer>;
 
     auto p = udt::small_pod{42, '/', 42};
     custom_json j = p;
@@ -672,12 +700,12 @@ TEST_CASE("custom serializer for pods" * doctest::test_suite("udt"))
     CHECK(np == np2);
 }
 
-template <typename T, typename>
+template<typename T, typename>
 struct another_adl_serializer;
 
 using custom_json = nlohmann::basic_json<std::map, std::vector, std::string, bool, std::int64_t, std::uint64_t, double, std::allocator, another_adl_serializer>;
 
-template <typename T, typename>
+template<typename T, typename>
 struct another_adl_serializer
 {
     static void from_json(const custom_json& j, T& t)
@@ -734,7 +762,7 @@ TEST_CASE("different basic_json types conversions")
     {
         json j = {1, 2, 3};
         custom_json cj = j;
-        CHECK((cj == std::vector<int> {1, 2, 3}));
+        CHECK((cj == std::vector<int>{1, 2, 3}));
     }
 
     SECTION("integer")
@@ -798,12 +826,14 @@ struct incomplete;
 // std::is_constructible is broken on macOS' libc++
 // use the cppreference implementation
 
-template <typename T, typename = void>
-struct is_constructible_patched : std::false_type {};
+template<typename T, typename = void>
+struct is_constructible_patched : std::false_type
+{};
 
-template <typename T>
-struct is_constructible_patched<T, decltype(void(json(std::declval<T>())))> : std::true_type {};
-}
+template<typename T>
+struct is_constructible_patched<T, decltype(void(json(std::declval<T>())))> : std::true_type
+{};
+}  // namespace
 
 TEST_CASE("an incomplete type does not trigger a compiler error in non-evaluated context" * doctest::test_suite("udt"))
 {
@@ -816,14 +846,16 @@ class Evil
 {
   public:
     Evil() = default;
-    template <typename T>
-    Evil(T t) : m_i(sizeof(t)) {}
+    template<typename T>
+    Evil(T t)
+      : m_i(sizeof(t))
+    {}
 
     int m_i = 0;
 };
 
 void from_json(const json&, Evil&) {}
-}
+}  // namespace
 
 TEST_CASE("Issue #924")
 {
@@ -840,6 +872,7 @@ TEST_CASE("Issue #924")
 
 TEST_CASE("Issue #1237")
 {
-    struct non_convertible_type {};
+    struct non_convertible_type
+    {};
     static_assert(!std::is_convertible<json, non_convertible_type>::value, "");
 }

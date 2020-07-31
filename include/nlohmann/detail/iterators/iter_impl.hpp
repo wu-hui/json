@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iterator> // iterator, random_access_iterator_tag, bidirectional_iterator_tag, advance, next
-#include <type_traits> // conditional, is_const, remove_const
+#include <iterator>     // iterator, random_access_iterator_tag, bidirectional_iterator_tag, advance, next
+#include <type_traits>  // conditional, is_const, remove_const
 
 #include <nlohmann/detail/exceptions.hpp>
 #include <nlohmann/detail/iterators/internal_iterator.hpp>
@@ -16,8 +16,10 @@ namespace nlohmann
 namespace detail
 {
 // forward declare, to be able to friend it later on
-template<typename IteratorType> class iteration_proxy;
-template<typename IteratorType> class iteration_proxy_value;
+template<typename IteratorType>
+class iteration_proxy;
+template<typename IteratorType>
+class iteration_proxy_value;
 
 /*!
 @brief a template for a bidirectional iterator for the @ref basic_json class
@@ -51,7 +53,6 @@ class iter_impl
                   "iter_impl only accepts (const) basic_json");
 
   public:
-
     /// The std::iterator class template (used as a base class to provide typedefs) is deprecated in C++17.
     /// The C++ Standard has never required user-defined iterators to derive from std::iterator.
     /// A user-defined iterator should provide publicly accessible typedefs named
@@ -65,13 +66,13 @@ class iter_impl
     using difference_type = typename BasicJsonType::difference_type;
     /// defines a pointer to the type iterated over (value_type)
     using pointer = typename std::conditional<std::is_const<BasicJsonType>::value,
-          typename BasicJsonType::const_pointer,
-          typename BasicJsonType::pointer>::type;
+                                              typename BasicJsonType::const_pointer,
+                                              typename BasicJsonType::pointer>::type;
     /// defines a reference to the type iterated over (value_type)
     using reference =
         typename std::conditional<std::is_const<BasicJsonType>::value,
-        typename BasicJsonType::const_reference,
-        typename BasicJsonType::reference>::type;
+                                  typename BasicJsonType::const_reference,
+                                  typename BasicJsonType::reference>::type;
 
     /// default constructor
     iter_impl() = default;
@@ -82,7 +83,8 @@ class iter_impl
     @pre object != nullptr
     @post The iterator is initialized; i.e. `m_object != nullptr`.
     */
-    explicit iter_impl(pointer object) noexcept : m_object(object)
+    explicit iter_impl(pointer object) noexcept
+      : m_object(object)
     {
         JSON_ASSERT(m_object != nullptr);
 
@@ -125,7 +127,8 @@ class iter_impl
           information refer to: https://github.com/nlohmann/json/issues/1608
     */
     iter_impl(const iter_impl<const BasicJsonType>& other) noexcept
-        : m_object(other.m_object), m_it(other.m_it)
+      : m_object(other.m_object)
+      , m_it(other.m_it)
     {}
 
     /*!
@@ -147,7 +150,8 @@ class iter_impl
     @note It is not checked whether @a other is initialized.
     */
     iter_impl(const iter_impl<typename std::remove_const<BasicJsonType>::type>& other) noexcept
-        : m_object(other.m_object), m_it(other.m_it)
+      : m_object(other.m_object)
+      , m_it(other.m_it)
     {}
 
     /*!
@@ -458,7 +462,7 @@ class iter_impl
     */
     bool operator<=(const iter_impl& other) const
     {
-        return !other.operator < (*this);
+        return !other.operator<(*this);
     }
 
     /*!
@@ -631,7 +635,7 @@ class iter_impl
     /// associated JSON instance
     pointer m_object = nullptr;
     /// the actual iterator of the associated instance
-    internal_iterator<typename std::remove_const<BasicJsonType>::type> m_it {};
+    internal_iterator<typename std::remove_const<BasicJsonType>::type> m_it{};
 };
-} // namespace detail
-} // namespace nlohmann
+}  // namespace detail
+}  // namespace nlohmann

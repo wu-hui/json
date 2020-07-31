@@ -504,32 +504,10 @@ clang_sanitize:
 # Code format and source amalgamation
 ##########################################################################
 
-# call the Artistic Style pretty printer on all source files
-pretty:
-	astyle \
-		--style=allman \
-		--indent=spaces=4 \
-		--indent-modifiers \
-	    --indent-switches \
-	    --indent-preproc-block \
-	    --indent-preproc-define \
-	    --indent-col1-comments \
-	    --pad-oper \
-	    --pad-header \
-	    --align-pointer=type \
-	    --align-reference=type \
-	    --add-brackets \
-	    --convert-tabs \
-	    --close-templates \
-	    --lineend=linux \
-	    --preserve-date \
-	    --suffix=none \
-	    --formatted \
-	   $(SRCS) $(AMALGAMATED_FILE) test/src/*.cpp test/src/*.hpp benchmarks/src/benchmarks.cpp doc/examples/*.cpp
-
 # call the Clang-Format on all source files
-pretty_format:
-	for FILE in $(SRCS) $(AMALGAMATED_FILE) test/src/*.cpp test/src/*.hpp benchmarks/src/benchmarks.cpp doc/examples/*.cpp; do echo $$FILE; clang-format -i $$FILE; done
+pretty:
+	for FILE in $(SRCS) test/src/*.cpp test/src/*.hpp benchmarks/src/benchmarks.cpp doc/examples/*.cpp; do echo $$FILE; clang-format -i $$FILE; done
+	$(MAKE) amalgamate
 
 # create single header file
 amalgamate: $(AMALGAMATED_FILE)
@@ -537,7 +515,6 @@ amalgamate: $(AMALGAMATED_FILE)
 # call the amalgamation tool and pretty print
 $(AMALGAMATED_FILE): $(SRCS)
 	third_party/amalgamate/amalgamate.py -c third_party/amalgamate/config.json -s . --verbose=yes
-	$(MAKE) pretty
 
 # check if file single_include/nlohmann/json.hpp has been amalgamated from the nlohmann sources
 # Note: this target is called by Travis

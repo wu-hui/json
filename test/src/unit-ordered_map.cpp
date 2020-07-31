@@ -32,21 +32,20 @@ SOFTWARE.
 #include <nlohmann/json.hpp>
 using nlohmann::ordered_map;
 
-
 TEST_CASE("ordered_map")
 {
     SECTION("constructor")
     {
         SECTION("constructor from iterator range")
         {
-            std::map<std::string, std::string> m {{"eins", "one"}, {"zwei", "two"}, {"drei", "three"}};
+            std::map<std::string, std::string> m{{"eins", "one"}, {"zwei", "two"}, {"drei", "three"}};
             ordered_map<std::string, std::string> om(m.begin(), m.end());
             CHECK(om.size() == 3);
         }
 
         SECTION("copy assignment")
         {
-            std::map<std::string, std::string> m {{"eins", "one"}, {"zwei", "two"}, {"drei", "three"}};
+            std::map<std::string, std::string> m{{"eins", "one"}, {"zwei", "two"}, {"drei", "three"}};
             ordered_map<std::string, std::string> om(m.begin(), m.end());
             const auto com = om;
             CHECK(com.size() == 3);
@@ -55,7 +54,7 @@ TEST_CASE("ordered_map")
 
     SECTION("at")
     {
-        std::map<std::string, std::string> m {{"eins", "one"}, {"zwei", "two"}, {"drei", "three"}};
+        std::map<std::string, std::string> m{{"eins", "one"}, {"zwei", "two"}, {"drei", "three"}};
         ordered_map<std::string, std::string> om(m.begin(), m.end());
         const auto com = om;
 
@@ -88,7 +87,7 @@ TEST_CASE("ordered_map")
 
     SECTION("operator[]")
     {
-        std::map<std::string, std::string> m {{"eins", "one"}, {"zwei", "two"}, {"drei", "three"}};
+        std::map<std::string, std::string> m{{"eins", "one"}, {"zwei", "two"}, {"drei", "three"}};
         ordered_map<std::string, std::string> om(m.begin(), m.end());
         const auto com = om;
 
@@ -262,8 +261,8 @@ TEST_CASE("ordered_map")
 
         SECTION("const value_type&")
         {
-            ordered_map<std::string, std::string>::value_type vt1 {"eins", "1"};
-            ordered_map<std::string, std::string>::value_type vt4 {"vier", "four"};
+            ordered_map<std::string, std::string>::value_type vt1{"eins", "1"};
+            ordered_map<std::string, std::string>::value_type vt4{"vier", "four"};
 
             auto res1 = om.insert(vt1);
             CHECK(res1.first == om.begin());

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <algorithm> // all_of
-#include <cctype> // isdigit
-#include <limits> // max
-#include <numeric> // accumulate
-#include <string> // string
-#include <utility> // move
-#include <vector> // vector
+#include <algorithm>  // all_of
+#include <cctype>     // isdigit
+#include <limits>     // max
+#include <numeric>    // accumulate
+#include <string>     // string
+#include <utility>    // move
+#include <vector>     // vector
 
 #include <nlohmann/detail/exceptions.hpp>
 #include <nlohmann/detail/macro_scope.hpp>
@@ -44,7 +44,7 @@ class json_pointer
     @since version 2.0.0
     */
     explicit json_pointer(const std::string& s = "")
-        : reference_tokens(split(s))
+      : reference_tokens(split(s))
     {}
 
     /*!
@@ -63,10 +63,7 @@ class json_pointer
     */
     std::string to_string() const
     {
-        return std::accumulate(reference_tokens.begin(), reference_tokens.end(),
-                               std::string{},
-                               [](const std::string & a, const std::string & b)
-        {
+        return std::accumulate(reference_tokens.begin(), reference_tokens.end(), std::string{}, [](const std::string& a, const std::string& b) {
             return a + "/" + escape(b);
         });
     }
@@ -337,9 +334,7 @@ class json_pointer
         // error condition (cf. RFC 6901, Sect. 4)
         if (JSON_HEDLEY_UNLIKELY(s.size() > 1 && s[0] == '0'))
         {
-            JSON_THROW(detail::parse_error::create(106, 0,
-                                                   "array index '" + s +
-                                                   "' must not begin with '0'"));
+            JSON_THROW(detail::parse_error::create(106, 0, "array index '" + s + "' must not begin with '0'"));
         }
 
         // error condition (cf. RFC 6901, Sect. 4)
@@ -369,7 +364,7 @@ class json_pointer
         // https://github.com/nlohmann/json/pull/2203
         if (res >= static_cast<unsigned long long>((std::numeric_limits<size_type>::max)()))
         {
-            JSON_THROW(detail::out_of_range::create(410, "array index " + s + " exceeds size_type")); // LCOV_EXCL_LINE
+            JSON_THROW(detail::out_of_range::create(410, "array index " + s + " exceeds size_type"));  // LCOV_EXCL_LINE
         }
 
         return static_cast<size_type>(res);
@@ -476,16 +471,14 @@ class json_pointer
             {
                 // check if reference token is a number
                 const bool nums =
-                    std::all_of(reference_token.begin(), reference_token.end(),
-                                [](const unsigned char x)
-                {
-                    return std::isdigit(x);
-                });
+                    std::all_of(reference_token.begin(), reference_token.end(), [](const unsigned char x) {
+                        return std::isdigit(x);
+                    });
 
                 // change value to array for numbers or "-" or to object otherwise
                 *ptr = (nums || reference_token == "-")
-                       ? detail::value_t::array
-                       : detail::value_t::object;
+                           ? detail::value_t::array
+                           : detail::value_t::object;
             }
 
             switch (ptr->type())
@@ -546,7 +539,7 @@ class json_pointer
                         // "-" always fails the range check
                         JSON_THROW(detail::out_of_range::create(402,
                                                                 "array index '-' (" + std::to_string(ptr->m_value.array->size()) +
-                                                                ") is out of range"));
+                                                                    ") is out of range"));
                     }
 
                     // note: at performs range check
@@ -595,7 +588,7 @@ class json_pointer
                         // "-" cannot be used for const access
                         JSON_THROW(detail::out_of_range::create(402,
                                                                 "array index '-' (" + std::to_string(ptr->m_value.array->size()) +
-                                                                ") is out of range"));
+                                                                    ") is out of range"));
                     }
 
                     // use unchecked array access
@@ -637,7 +630,7 @@ class json_pointer
                         // "-" always fails the range check
                         JSON_THROW(detail::out_of_range::create(402,
                                                                 "array index '-' (" + std::to_string(ptr->m_value.array->size()) +
-                                                                ") is out of range"));
+                                                                    ") is out of range"));
                     }
 
                     // note: at performs range check
@@ -750,9 +743,7 @@ class json_pointer
         // check if nonempty reference string begins with slash
         if (JSON_HEDLEY_UNLIKELY(reference_string[0] != '/'))
         {
-            JSON_THROW(detail::parse_error::create(107, 1,
-                                                   "JSON pointer must be empty or begin with '/' - was: '" +
-                                                   reference_string + "'"));
+            JSON_THROW(detail::parse_error::create(107, 1, "JSON pointer must be empty or begin with '/' - was: '" + reference_string + "'"));
         }
 
         // extract the reference tokens:
@@ -761,14 +752,14 @@ class json_pointer
         for (
             // search for the first slash after the first character
             std::size_t slash = reference_string.find_first_of('/', 1),
-            // set the beginning of the first reference token
+                        // set the beginning of the first reference token
             start = 1;
             // we can stop if start == 0 (if slash == std::string::npos)
             start != 0;
             // set the beginning of the next reference token
             // (will eventually be 0 if slash == std::string::npos)
             start = (slash == std::string::npos) ? 0 : slash + 1,
-            // find next slash
+                        // find next slash
             slash = reference_string.find_first_of('/', start))
         {
             // use the text between the beginning of the reference token
@@ -777,8 +768,8 @@ class json_pointer
 
             // check reference tokens are properly escaped
             for (std::size_t pos = reference_token.find_first_of('~');
-                    pos != std::string::npos;
-                    pos = reference_token.find_first_of('~', pos + 1))
+                 pos != std::string::npos;
+                 pos = reference_token.find_first_of('~', pos + 1))
             {
                 JSON_ASSERT(reference_token[pos] == '~');
 
@@ -812,15 +803,15 @@ class json_pointer
 
     @since version 2.0.0
     */
-    static void replace_substring(std::string& s, const std::string& f,
-                                  const std::string& t)
+    static void replace_substring(std::string& s, const std::string& f, const std::string& t)
     {
         JSON_ASSERT(!f.empty());
-        for (auto pos = s.find(f);                // find first occurrence of f
-                pos != std::string::npos;         // make sure f was found
-                s.replace(pos, f.size(), t),      // replace with t, and
-                pos = s.find(f, pos + t.size()))  // find next occurrence of f
-        {}
+        for (auto pos = s.find(f);             // find first occurrence of f
+             pos != std::string::npos;         // make sure f was found
+             s.replace(pos, f.size(), t),      // replace with t, and
+             pos = s.find(f, pos + t.size()))  // find next occurrence of f
+        {
+        }
     }
 
     /// escape "~" to "~0" and "/" to "~1"
@@ -864,7 +855,8 @@ class json_pointer
                     for (std::size_t i = 0; i < value.m_value.array->size(); ++i)
                     {
                         flatten(reference_string + "/" + std::to_string(i),
-                                value.m_value.array->operator[](i), result);
+                                value.m_value.array->operator[](i),
+                                result);
                     }
                 }
                 break;

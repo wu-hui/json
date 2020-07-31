@@ -1,11 +1,11 @@
 #ifndef INCLUDE_NLOHMANN_JSON_FWD_HPP_
 #define INCLUDE_NLOHMANN_JSON_FWD_HPP_
 
-#include <cstdint> // int64_t, uint64_t
-#include <map> // map
-#include <memory> // allocator
-#include <string> // string
-#include <vector> // vector
+#include <cstdint>  // int64_t, uint64_t
+#include <map>      // map
+#include <memory>   // allocator
+#include <string>   // string
+#include <vector>   // vector
 
 /*!
 @brief namespace for Niels Lohmann
@@ -25,15 +25,16 @@ template<typename T = void, typename SFINAE = void>
 struct adl_serializer;
 
 template<template<typename U, typename V, typename... Args> class ObjectType =
-         std::map,
+             std::map,
          template<typename U, typename... Args> class ArrayType = std::vector,
-         class StringType = std::string, class BooleanType = bool,
+         class StringType = std::string,
+         class BooleanType = bool,
          class NumberIntegerType = std::int64_t,
          class NumberUnsignedType = std::uint64_t,
          class NumberFloatType = double,
          template<typename U> class AllocatorType = std::allocator,
          template<typename T, typename SFINAE = void> class JSONSerializer =
-         adl_serializer,
+             adl_serializer,
          class BinaryType = std::vector<std::uint8_t>>
 class basic_json;
 

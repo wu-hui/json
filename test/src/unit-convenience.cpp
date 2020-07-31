@@ -46,7 +46,7 @@ void check_escaped(const char* original, const char* escaped, const bool ensure_
     s.dump_escaped(original, ensure_ascii);
     CHECK(ss.str() == escaped);
 }
-}
+}  // namespace
 
 TEST_CASE("convenience functions")
 {

@@ -1,16 +1,16 @@
 #pragma once
 
-#include <algorithm> // transform
-#include <array> // array
-#include <forward_list> // forward_list
-#include <iterator> // inserter, front_inserter, end
-#include <map> // map
-#include <string> // string
-#include <tuple> // tuple, make_tuple
-#include <type_traits> // is_arithmetic, is_same, is_enum, underlying_type, is_convertible
-#include <unordered_map> // unordered_map
-#include <utility> // pair, declval
-#include <valarray> // valarray
+#include <algorithm>      // transform
+#include <array>          // array
+#include <forward_list>   // forward_list
+#include <iterator>       // inserter, front_inserter, end
+#include <map>            // map
+#include <string>         // string
+#include <tuple>          // tuple, make_tuple
+#include <type_traits>    // is_arithmetic, is_same, is_enum, underlying_type, is_convertible
+#include <unordered_map>  // unordered_map
+#include <utility>        // pair, declval
+#include <valarray>       // valarray
 
 #include <nlohmann/detail/exceptions.hpp>
 #include <nlohmann/detail/macro_scope.hpp>
@@ -33,10 +33,7 @@ void from_json(const BasicJsonType& j, typename std::nullptr_t& n)
 }
 
 // overloads for basic_json template parameters
-template < typename BasicJsonType, typename ArithmeticType,
-           enable_if_t < std::is_arithmetic<ArithmeticType>::value&&
-                         !std::is_same<ArithmeticType, typename BasicJsonType::boolean_t>::value,
-                         int > = 0 >
+template<typename BasicJsonType, typename ArithmeticType, enable_if_t<std::is_arithmetic<ArithmeticType>::value && !std::is_same<ArithmeticType, typename BasicJsonType::boolean_t>::value, int> = 0>
 void get_arithmetic_value(const BasicJsonType& j, ArithmeticType& val)
 {
     switch (static_cast<value_t>(j))
@@ -82,13 +79,14 @@ void from_json(const BasicJsonType& j, typename BasicJsonType::string_t& s)
     s = *j.template get_ptr<const typename BasicJsonType::string_t*>();
 }
 
-template <
-    typename BasicJsonType, typename ConstructibleStringType,
-    enable_if_t <
-        is_constructible_string_type<BasicJsonType, ConstructibleStringType>::value&&
-        !std::is_same<typename BasicJsonType::string_t,
-                      ConstructibleStringType>::value,
-        int > = 0 >
+template<
+    typename BasicJsonType,
+    typename ConstructibleStringType,
+    enable_if_t<
+        is_constructible_string_type<BasicJsonType, ConstructibleStringType>::value &&
+            !std::is_same<typename BasicJsonType::string_t,
+                          ConstructibleStringType>::value,
+        int> = 0>
 void from_json(const BasicJsonType& j, ConstructibleStringType& s)
 {
     if (JSON_HEDLEY_UNLIKELY(!j.is_string()))
@@ -117,8 +115,7 @@ void from_json(const BasicJsonType& j, typename BasicJsonType::number_integer_t&
     get_arithmetic_value(j, val);
 }
 
-template<typename BasicJsonType, typename EnumType,
-         enable_if_t<std::is_enum<EnumType>::value, int> = 0>
+template<typename BasicJsonType, typename EnumType, enable_if_t<std::is_enum<EnumType>::value, int> = 0>
 void from_json(const BasicJsonType& j, EnumType& e)
 {
     typename std::underlying_type<EnumType>::type val;
@@ -127,8 +124,7 @@ void from_json(const BasicJsonType& j, EnumType& e)
 }
 
 // forward_list doesn't have an insert method
-template<typename BasicJsonType, typename T, typename Allocator,
-         enable_if_t<is_getable<BasicJsonType, T>::value, int> = 0>
+template<typename BasicJsonType, typename T, typename Allocator, enable_if_t<is_getable<BasicJsonType, T>::value, int> = 0>
 void from_json(const BasicJsonType& j, std::forward_list<T, Allocator>& l)
 {
     if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
@@ -136,16 +132,13 @@ void from_json(const BasicJsonType& j, std::forward_list<T, Allocator>& l)
         JSON_THROW(type_error::create(302, "type must be array, but is " + std::string(j.type_name())));
     }
     l.clear();
-    std::transform(j.rbegin(), j.rend(),
-                   std::front_inserter(l), [](const BasicJsonType & i)
-    {
+    std::transform(j.rbegin(), j.rend(), std::front_inserter(l), [](const BasicJsonType& i) {
         return i.template get<T>();
     });
 }
 
 // valarray doesn't have an insert method
-template<typename BasicJsonType, typename T,
-         enable_if_t<is_getable<BasicJsonType, T>::value, int> = 0>
+template<typename BasicJsonType, typename T, enable_if_t<is_getable<BasicJsonType, T>::value, int> = 0>
 void from_json(const BasicJsonType& j, std::valarray<T>& l)
 {
     if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
@@ -153,16 +146,14 @@ void from_json(const BasicJsonType& j, std::valarray<T>& l)
         JSON_THROW(type_error::create(302, "type must be array, but is " + std::string(j.type_name())));
     }
     l.resize(j.size());
-    std::transform(j.begin(), j.end(), std::begin(l),
-                   [](const BasicJsonType & elem)
-    {
+    std::transform(j.begin(), j.end(), std::begin(l), [](const BasicJsonType& elem) {
         return elem.template get<T>();
     });
 }
 
 template<typename BasicJsonType, typename T, std::size_t N>
 auto from_json(const BasicJsonType& j, T (&arr)[N])
--> decltype(j.template get<T>(), void())
+    -> decltype(j.template get<T>(), void())
 {
     for (std::size_t i = 0; i < N; ++i)
     {
@@ -177,9 +168,8 @@ void from_json_array_impl(const BasicJsonType& j, typename BasicJsonType::array_
 }
 
 template<typename BasicJsonType, typename T, std::size_t N>
-auto from_json_array_impl(const BasicJsonType& j, std::array<T, N>& arr,
-                          priority_tag<2> /*unused*/)
--> decltype(j.template get<T>(), void())
+auto from_json_array_impl(const BasicJsonType& j, std::array<T, N>& arr, priority_tag<2> /*unused*/)
+    -> decltype(j.template get<T>(), void())
 {
     for (std::size_t i = 0; i < N; ++i)
     {
@@ -189,18 +179,16 @@ auto from_json_array_impl(const BasicJsonType& j, std::array<T, N>& arr,
 
 template<typename BasicJsonType, typename ConstructibleArrayType>
 auto from_json_array_impl(const BasicJsonType& j, ConstructibleArrayType& arr, priority_tag<1> /*unused*/)
--> decltype(
-    arr.reserve(std::declval<typename ConstructibleArrayType::size_type>()),
-    j.template get<typename ConstructibleArrayType::value_type>(),
-    void())
+    -> decltype(
+        arr.reserve(std::declval<typename ConstructibleArrayType::size_type>()),
+        j.template get<typename ConstructibleArrayType::value_type>(),
+        void())
 {
     using std::end;
 
     ConstructibleArrayType ret;
     ret.reserve(j.size());
-    std::transform(j.begin(), j.end(),
-                   std::inserter(ret, end(ret)), [](const BasicJsonType & i)
-    {
+    std::transform(j.begin(), j.end(), std::inserter(ret, end(ret)), [](const BasicJsonType& i) {
         // get<BasicJsonType>() returns *this, this won't call a from_json
         // method when value_type is BasicJsonType
         return i.template get<typename ConstructibleArrayType::value_type>();
@@ -209,43 +197,35 @@ auto from_json_array_impl(const BasicJsonType& j, ConstructibleArrayType& arr, p
 }
 
 template<typename BasicJsonType, typename ConstructibleArrayType>
-void from_json_array_impl(const BasicJsonType& j, ConstructibleArrayType& arr,
-                          priority_tag<0> /*unused*/)
+void from_json_array_impl(const BasicJsonType& j, ConstructibleArrayType& arr, priority_tag<0> /*unused*/)
 {
     using std::end;
 
     ConstructibleArrayType ret;
     std::transform(
-        j.begin(), j.end(), std::inserter(ret, end(ret)),
-        [](const BasicJsonType & i)
-    {
-        // get<BasicJsonType>() returns *this, this won't call a from_json
-        // method when value_type is BasicJsonType
-        return i.template get<typename ConstructibleArrayType::value_type>();
-    });
+        j.begin(),
+        j.end(),
+        std::inserter(ret, end(ret)),
+        [](const BasicJsonType& i) {
+            // get<BasicJsonType>() returns *this, this won't call a from_json
+            // method when value_type is BasicJsonType
+            return i.template get<typename ConstructibleArrayType::value_type>();
+        });
     arr = std::move(ret);
 }
 
-template < typename BasicJsonType, typename ConstructibleArrayType,
-           enable_if_t <
-               is_constructible_array_type<BasicJsonType, ConstructibleArrayType>::value&&
-               !is_constructible_object_type<BasicJsonType, ConstructibleArrayType>::value&&
-               !is_constructible_string_type<BasicJsonType, ConstructibleArrayType>::value&&
-               !std::is_same<ConstructibleArrayType, typename BasicJsonType::binary_t>::value&&
-               !is_basic_json<ConstructibleArrayType>::value,
-               int > = 0 >
+template<typename BasicJsonType, typename ConstructibleArrayType, enable_if_t<is_constructible_array_type<BasicJsonType, ConstructibleArrayType>::value && !is_constructible_object_type<BasicJsonType, ConstructibleArrayType>::value && !is_constructible_string_type<BasicJsonType, ConstructibleArrayType>::value && !std::is_same<ConstructibleArrayType, typename BasicJsonType::binary_t>::value && !is_basic_json<ConstructibleArrayType>::value, int> = 0>
 auto from_json(const BasicJsonType& j, ConstructibleArrayType& arr)
--> decltype(from_json_array_impl(j, arr, priority_tag<3> {}),
-j.template get<typename ConstructibleArrayType::value_type>(),
-void())
+    -> decltype(from_json_array_impl(j, arr, priority_tag<3>{}),
+                j.template get<typename ConstructibleArrayType::value_type>(),
+                void())
 {
     if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
     {
-        JSON_THROW(type_error::create(302, "type must be array, but is " +
-                                      std::string(j.type_name())));
+        JSON_THROW(type_error::create(302, "type must be array, but is " + std::string(j.type_name())));
     }
 
-    from_json_array_impl(j, arr, priority_tag<3> {});
+    from_json_array_impl(j, arr, priority_tag<3>{});
 }
 
 template<typename BasicJsonType>
@@ -259,8 +239,7 @@ void from_json(const BasicJsonType& j, typename BasicJsonType::binary_t& bin)
     bin = *j.template get_ptr<const typename BasicJsonType::binary_t*>();
 }
 
-template<typename BasicJsonType, typename ConstructibleObjectType,
-         enable_if_t<is_constructible_object_type<BasicJsonType, ConstructibleObjectType>::value, int> = 0>
+template<typename BasicJsonType, typename ConstructibleObjectType, enable_if_t<is_constructible_object_type<BasicJsonType, ConstructibleObjectType>::value, int> = 0>
 void from_json(const BasicJsonType& j, ConstructibleObjectType& obj)
 {
     if (JSON_HEDLEY_UNLIKELY(!j.is_object()))
@@ -272,12 +251,12 @@ void from_json(const BasicJsonType& j, ConstructibleObjectType& obj)
     auto inner_object = j.template get_ptr<const typename BasicJsonType::object_t*>();
     using value_type = typename ConstructibleObjectType::value_type;
     std::transform(
-        inner_object->begin(), inner_object->end(),
+        inner_object->begin(),
+        inner_object->end(),
         std::inserter(ret, ret.begin()),
-        [](typename BasicJsonType::object_t::value_type const & p)
-    {
-        return value_type(p.first, p.second.template get<typename ConstructibleObjectType::mapped_type>());
-    });
+        [](typename BasicJsonType::object_t::value_type const& p) {
+            return value_type(p.first, p.second.template get<typename ConstructibleObjectType::mapped_type>());
+        });
     obj = std::move(ret);
 }
 
@@ -285,14 +264,7 @@ void from_json(const BasicJsonType& j, ConstructibleObjectType& obj)
 // (BooleanType, etc..); note: Is it really necessary to provide explicit
 // overloads for boolean_t etc. in case of a custom BooleanType which is not
 // an arithmetic type?
-template < typename BasicJsonType, typename ArithmeticType,
-           enable_if_t <
-               std::is_arithmetic<ArithmeticType>::value&&
-               !std::is_same<ArithmeticType, typename BasicJsonType::number_unsigned_t>::value&&
-               !std::is_same<ArithmeticType, typename BasicJsonType::number_integer_t>::value&&
-               !std::is_same<ArithmeticType, typename BasicJsonType::number_float_t>::value&&
-               !std::is_same<ArithmeticType, typename BasicJsonType::boolean_t>::value,
-               int > = 0 >
+template<typename BasicJsonType, typename ArithmeticType, enable_if_t<std::is_arithmetic<ArithmeticType>::value && !std::is_same<ArithmeticType, typename BasicJsonType::number_unsigned_t>::value && !std::is_same<ArithmeticType, typename BasicJsonType::number_integer_t>::value && !std::is_same<ArithmeticType, typename BasicJsonType::number_float_t>::value && !std::is_same<ArithmeticType, typename BasicJsonType::boolean_t>::value, int> = 0>
 void from_json(const BasicJsonType& j, ArithmeticType& val)
 {
     switch (static_cast<value_t>(j))
@@ -338,12 +310,10 @@ void from_json_tuple_impl(const BasicJsonType& j, Tuple& t, index_sequence<Idx..
 template<typename BasicJsonType, typename... Args>
 void from_json(const BasicJsonType& j, std::tuple<Args...>& t)
 {
-    from_json_tuple_impl(j, t, index_sequence_for<Args...> {});
+    from_json_tuple_impl(j, t, index_sequence_for<Args...>{});
 }
 
-template < typename BasicJsonType, typename Key, typename Value, typename Compare, typename Allocator,
-           typename = enable_if_t < !std::is_constructible <
-                                        typename BasicJsonType::string_t, Key >::value >>
+template<typename BasicJsonType, typename Key, typename Value, typename Compare, typename Allocator, typename = enable_if_t<!std::is_constructible<typename BasicJsonType::string_t, Key>::value>>
 void from_json(const BasicJsonType& j, std::map<Key, Value, Compare, Allocator>& m)
 {
     if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
@@ -361,9 +331,7 @@ void from_json(const BasicJsonType& j, std::map<Key, Value, Compare, Allocator>&
     }
 }
 
-template < typename BasicJsonType, typename Key, typename Value, typename Hash, typename KeyEqual, typename Allocator,
-           typename = enable_if_t < !std::is_constructible <
-                                        typename BasicJsonType::string_t, Key >::value >>
+template<typename BasicJsonType, typename Key, typename Value, typename Hash, typename KeyEqual, typename Allocator, typename = enable_if_t<!std::is_constructible<typename BasicJsonType::string_t, Key>::value>>
 void from_json(const BasicJsonType& j, std::unordered_map<Key, Value, Hash, KeyEqual, Allocator>& m)
 {
     if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
@@ -385,8 +353,8 @@ struct from_json_fn
 {
     template<typename BasicJsonType, typename T>
     auto operator()(const BasicJsonType& j, T& val) const
-    noexcept(noexcept(from_json(j, val)))
-    -> decltype(from_json(j, val), void())
+        noexcept(noexcept(from_json(j, val)))
+            -> decltype(from_json(j, val), void())
     {
         return from_json(j, val);
     }
@@ -399,5 +367,5 @@ struct from_json_fn
 namespace
 {
 constexpr const auto& from_json = detail::static_const<detail::from_json_fn>::value;
-} // namespace
-} // namespace nlohmann
+}  // namespace
+}  // namespace nlohmann

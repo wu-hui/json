@@ -16,29 +16,29 @@ class json_ref
     using value_type = BasicJsonType;
 
     json_ref(value_type&& value)
-        : owned_value(std::move(value))
-        , value_ref(&owned_value)
-        , is_rvalue(true)
+      : owned_value(std::move(value))
+      , value_ref(&owned_value)
+      , is_rvalue(true)
     {}
 
     json_ref(const value_type& value)
-        : value_ref(const_cast<value_type*>(&value))
-        , is_rvalue(false)
+      : value_ref(const_cast<value_type*>(&value))
+      , is_rvalue(false)
     {}
 
     json_ref(std::initializer_list<json_ref> init)
-        : owned_value(init)
-        , value_ref(&owned_value)
-        , is_rvalue(true)
+      : owned_value(init)
+      , value_ref(&owned_value)
+      , is_rvalue(true)
     {}
 
-    template <
+    template<
         class... Args,
-        enable_if_t<std::is_constructible<value_type, Args...>::value, int> = 0 >
-    json_ref(Args && ... args)
-        : owned_value(std::forward<Args>(args)...)
-        , value_ref(&owned_value)
-        , is_rvalue(true)
+        enable_if_t<std::is_constructible<value_type, Args...>::value, int> = 0>
+    json_ref(Args&&... args)
+      : owned_value(std::forward<Args>(args)...)
+      , value_ref(&owned_value)
+      , is_rvalue(true)
     {}
 
     // class should be movable only

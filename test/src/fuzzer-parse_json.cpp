@@ -20,8 +20,8 @@ Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 */
 
 #include <iostream>
-#include <sstream>
 #include <nlohmann/json.hpp>
+#include <sstream>
 
 using json = nlohmann::json;
 

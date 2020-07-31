@@ -21,7 +21,8 @@ struct nonesuch
 
 template<class Default,
          class AlwaysVoid,
-         template<class...> class Op,
+         template<class...>
+         class Op,
          class... Args>
 struct detector
 {

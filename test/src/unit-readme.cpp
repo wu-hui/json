@@ -35,17 +35,17 @@ using nlohmann::json;
 
 #include <deque>
 #include <forward_list>
+#include <iomanip>
+#include <iostream>
 #include <list>
 #include <set>
+#include <sstream>
 #include <unordered_map>
 #include <unordered_set>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
 
 #if defined(_MSC_VER)
-    #pragma warning (push)
-    #pragma warning (disable : 4189) // local variable is initialized but not referenced
+    #pragma warning(push)
+    #pragma warning(disable : 4189)  // local variable is initialized but not referenced
 #endif
 
 TEST_CASE("README" * doctest::skip())
@@ -75,31 +75,21 @@ TEST_CASE("README" * doctest::skip())
             j["answer"]["everything"] = 42;
 
             // add an array that is stored as std::vector (using an initializer list)
-            j["list"] = { 1, 0, 2 };
+            j["list"] = {1, 0, 2};
 
             // add another object (using an initializer list of pairs)
-            j["object"] = { {"currency", "USD"}, {"value", 42.99} };
+            j["object"] = {{"currency", "USD"}, {"value", 42.99}};
 
             // instead, you could also write (which looks very similar to the JSON above)
             json j2 =
-            {
-                {"pi", 3.141},
-                {"happy", true},
-                {"name", "Niels"},
-                {"nothing", nullptr},
                 {
-                    "answer", {
-                        {"everything", 42}
-                    }
-                },
-                {"list", {1, 0, 2}},
-                {
-                    "object", {
-                        {"currency", "USD"},
-                        {"value", 42.99}
-                    }
-                }
-            };
+                    {"pi", 3.141},
+                    {"happy", true},
+                    {"name", "Niels"},
+                    {"nothing", nullptr},
+                    {"answer", {{"everything", 42}}},
+                    {"list", {1, 0, 2}},
+                    {"object", {{"currency", "USD"}, {"value", 42.99}}}};
         }
 
         {
@@ -114,7 +104,7 @@ TEST_CASE("README" * doctest::skip())
             CHECK(empty_object_explicit.is_object());
 
             // a way to express an _array_ of key/value pairs [["currency", "USD"], ["value", 42.99]]
-            json array_not_object = json::array({ {"currency", "USD"}, {"value", 42.99} });
+            json array_not_object = json::array({{"currency", "USD"}, {"value", 42.99}});
             CHECK(array_not_object.is_array());
             CHECK(array_not_object.size() == 2);
             CHECK(array_not_object[0].is_array());
@@ -137,7 +127,7 @@ TEST_CASE("README" * doctest::skip())
             auto j3 = json::parse("{ \"happy\": true, \"pi\": 3.141 }");
 
             // explicit conversion to string
-            std::string s = j.dump();    // {\"happy\":true,\"pi\":3.141}
+            std::string s = j.dump();  // {\"happy\":true,\"pi\":3.141}
 
             // serialization with pretty printing
             // pass in the amount of spaces to indent
@@ -180,10 +170,10 @@ TEST_CASE("README" * doctest::skip())
             CHECK(foo == true);
 
             // other stuff
-            j.size();     // 3 entries
-            j.empty();    // false
-            j.type();     // json::value_t::array
-            j.clear();    // the array is empty again
+            j.size();   // 3 entries
+            j.empty();  // false
+            j.type();   // json::value_t::array
+            j.clear();  // the array is empty again
 
             // create an object
             json o;
@@ -199,58 +189,58 @@ TEST_CASE("README" * doctest::skip())
         }
 
         {
-            std::vector<int> c_vector {1, 2, 3, 4};
+            std::vector<int> c_vector{1, 2, 3, 4};
             json j_vec(c_vector);
             // [1, 2, 3, 4]
 
-            std::deque<float> c_deque {1.2f, 2.3f, 3.4f, 5.6f};
+            std::deque<float> c_deque{1.2f, 2.3f, 3.4f, 5.6f};
             json j_deque(c_deque);
             // [1.2, 2.3, 3.4, 5.6]
 
-            std::list<bool> c_list {true, true, false, true};
+            std::list<bool> c_list{true, true, false, true};
             json j_list(c_list);
             // [true, true, false, true]
 
-            std::forward_list<int64_t> c_flist {12345678909876, 23456789098765, 34567890987654, 45678909876543};
+            std::forward_list<int64_t> c_flist{12345678909876, 23456789098765, 34567890987654, 45678909876543};
             json j_flist(c_flist);
             // [12345678909876, 23456789098765, 34567890987654, 45678909876543]
 
-            std::array<unsigned long, 4> c_array {{1, 2, 3, 4}};
+            std::array<unsigned long, 4> c_array{{1, 2, 3, 4}};
             json j_array(c_array);
             // [1, 2, 3, 4]
 
-            std::set<std::string> c_set {"one", "two", "three", "four", "one"};
-            json j_set(c_set); // only one entry for "one" is used
+            std::set<std::string> c_set{"one", "two", "three", "four", "one"};
+            json j_set(c_set);  // only one entry for "one" is used
             // ["four", "one", "three", "two"]
 
-            std::unordered_set<std::string> c_uset {"one", "two", "three", "four", "one"};
-            json j_uset(c_uset); // only one entry for "one" is used
+            std::unordered_set<std::string> c_uset{"one", "two", "three", "four", "one"};
+            json j_uset(c_uset);  // only one entry for "one" is used
             // maybe ["two", "three", "four", "one"]
 
-            std::multiset<std::string> c_mset {"one", "two", "one", "four"};
-            json j_mset(c_mset); // both entries for "one" are used
+            std::multiset<std::string> c_mset{"one", "two", "one", "four"};
+            json j_mset(c_mset);  // both entries for "one" are used
             // maybe ["one", "two", "one", "four"]
 
-            std::unordered_multiset<std::string> c_umset {"one", "two", "one", "four"};
-            json j_umset(c_umset); // both entries for "one" are used
+            std::unordered_multiset<std::string> c_umset{"one", "two", "one", "four"};
+            json j_umset(c_umset);  // both entries for "one" are used
             // maybe ["one", "two", "one", "four"]
         }
 
         {
-            std::map<std::string, int> c_map { {"one", 1}, {"two", 2}, {"three", 3} };
+            std::map<std::string, int> c_map{{"one", 1}, {"two", 2}, {"three", 3}};
             json j_map(c_map);
             // {"one": 1, "two": 2, "three": 3}
 
-            std::unordered_map<const char*, float> c_umap { {"one", 1.2f}, {"two", 2.3f}, {"three", 3.4f} };
+            std::unordered_map<const char*, float> c_umap{{"one", 1.2f}, {"two", 2.3f}, {"three", 3.4f}};
             json j_umap(c_umap);
             // {"one": 1.2, "two": 2.3, "three": 3.4}
 
-            std::multimap<std::string, bool> c_mmap { {"one", true}, {"two", true}, {"three", false}, {"three", true} };
-            json j_mmap(c_mmap); // only one entry for key "three" is used
+            std::multimap<std::string, bool> c_mmap{{"one", true}, {"two", true}, {"three", false}, {"three", true}};
+            json j_mmap(c_mmap);  // only one entry for key "three" is used
             // maybe {"one": true, "two": true, "three": true}
 
-            std::unordered_multimap<std::string, bool> c_ummap { {"one", true}, {"two", true}, {"three", false}, {"three", true} };
-            json j_ummap(c_ummap); // only one entry for key "three" is used
+            std::unordered_multimap<std::string, bool> c_ummap{{"one", true}, {"two", true}, {"three", false}, {"three", true}};
+            json j_ummap(c_ummap);  // only one entry for key "three" is used
             // maybe {"one": true, "two": true, "three": true}
         }
 
@@ -323,5 +313,5 @@ TEST_CASE("README" * doctest::skip())
 }
 
 #if defined(_MSC_VER)
-    #pragma warning (pop)
+    #pragma warning(pop)
 #endif

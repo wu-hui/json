@@ -1,9 +1,9 @@
 #pragma once
 
-#include <array> // array
-#include <cstddef> // size_t
-#include <cstdint> // uint8_t
-#include <string> // string
+#include <array>    // array
+#include <cstddef>  // size_t
+#include <cstdint>  // uint8_t
+#include <string>   // string
 
 namespace nlohmann
 {
@@ -67,11 +67,16 @@ Returns an ordering that is similar to Python:
 inline bool operator<(const value_t lhs, const value_t rhs) noexcept
 {
     static constexpr std::array<std::uint8_t, 9> order = {{
-            0 /* null */, 3 /* object */, 4 /* array */, 5 /* string */,
-            1 /* boolean */, 2 /* integer */, 2 /* unsigned */, 2 /* float */,
-            6 /* binary */
-        }
-    };
+        0 /* null */,
+        3 /* object */,
+        4 /* array */,
+        5 /* string */,
+        1 /* boolean */,
+        2 /* integer */,
+        2 /* unsigned */,
+        2 /* float */,
+        6 /* binary */
+    }};
 
     const auto l_index = static_cast<std::size_t>(lhs);
     const auto r_index = static_cast<std::size_t>(rhs);

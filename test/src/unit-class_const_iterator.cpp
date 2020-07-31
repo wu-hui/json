@@ -71,7 +71,7 @@ TEST_CASE("const_iterator class")
         {
             SECTION("create from uninitialized iterator")
             {
-                const json::iterator it {};
+                const json::iterator it{};
                 json::const_iterator cit(it);
             }
 

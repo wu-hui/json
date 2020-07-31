@@ -1,12 +1,11 @@
 #pragma once
 
-#include <cstdint> // uint8_t
-#include <tuple> // tie
-#include <utility> // move
+#include <cstdint>  // uint8_t
+#include <tuple>    // tie
+#include <utility>  // move
 
 namespace nlohmann
 {
-
 /*!
 @brief an internal type for a backed binary type
 
@@ -28,27 +27,27 @@ class byte_container_with_subtype : public BinaryType
     using container_type = BinaryType;
 
     byte_container_with_subtype() noexcept(noexcept(container_type()))
-        : container_type()
+      : container_type()
     {}
 
     byte_container_with_subtype(const container_type& b) noexcept(noexcept(container_type(b)))
-        : container_type(b)
+      : container_type(b)
     {}
 
     byte_container_with_subtype(container_type&& b) noexcept(noexcept(container_type(std::move(b))))
-        : container_type(std::move(b))
+      : container_type(std::move(b))
     {}
 
     byte_container_with_subtype(const container_type& b, std::uint8_t subtype) noexcept(noexcept(container_type(b)))
-        : container_type(b)
-        , m_subtype(subtype)
-        , m_has_subtype(true)
+      : container_type(b)
+      , m_subtype(subtype)
+      , m_has_subtype(true)
     {}
 
     byte_container_with_subtype(container_type&& b, std::uint8_t subtype) noexcept(noexcept(container_type(std::move(b))))
-        : container_type(std::move(b))
-        , m_subtype(subtype)
-        , m_has_subtype(true)
+      : container_type(std::move(b))
+      , m_subtype(subtype)
+      , m_has_subtype(true)
     {}
 
     bool operator==(const byte_container_with_subtype& rhs) const

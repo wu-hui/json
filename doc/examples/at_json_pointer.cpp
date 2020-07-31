@@ -7,9 +7,10 @@ int main()
 {
     // create a JSON value
     json j =
-    {
-        {"number", 1}, {"string", "foo"}, {"array", {1, 2}}
-    };
+        {
+            {"number", 1},
+            {"string", "foo"},
+            {"array", {1, 2}}};
 
     // read-only access
 
@@ -33,7 +34,6 @@ int main()
     j.at("/array/1"_json_pointer) = 21;
     // output the changed array
     std::cout << j["array"] << '\n';
-
 
     // out_of_range.106
     try

@@ -1,16 +1,16 @@
 #pragma once
 
-#include <array> // array
-#include <cstddef> // size_t
-#include <cstdio> //FILE *
-#include <cstring> // strlen
-#include <istream> // istream
-#include <iterator> // begin, end, iterator_traits, random_access_iterator_tag, distance, next
-#include <memory> // shared_ptr, make_shared, addressof
-#include <numeric> // accumulate
-#include <string> // string, char_traits
-#include <type_traits> // enable_if, is_base_of, is_pointer, is_integral, remove_pointer
-#include <utility> // pair, declval
+#include <array>        // array
+#include <cstddef>      // size_t
+#include <cstdio>       //FILE *
+#include <cstring>      // strlen
+#include <istream>      // istream
+#include <iterator>     // begin, end, iterator_traits, random_access_iterator_tag, distance, next
+#include <memory>       // shared_ptr, make_shared, addressof
+#include <numeric>      // accumulate
+#include <string>       // string, char_traits
+#include <type_traits>  // enable_if, is_base_of, is_pointer, is_integral, remove_pointer
+#include <utility>      // pair, declval
 
 #include <nlohmann/detail/iterators/iterator_traits.hpp>
 #include <nlohmann/detail/macro_scope.hpp>
@@ -20,7 +20,14 @@ namespace nlohmann
 namespace detail
 {
 /// the supported input formats
-enum class input_format_t { json, cbor, msgpack, ubjson, bson };
+enum class input_format_t
+{
+    json,
+    cbor,
+    msgpack,
+    ubjson,
+    bson
+};
 
 ////////////////////
 // input adapters //
@@ -37,7 +44,7 @@ class file_input_adapter
 
     JSON_HEDLEY_NON_NULL(2)
     explicit file_input_adapter(std::FILE* f) noexcept
-        : m_file(f)
+      : m_file(f)
     {}
 
     // make class move-only
@@ -55,7 +62,6 @@ class file_input_adapter
     /// the file pointer to read from
     std::FILE* m_file;
 };
-
 
 /*!
 Input adapter for a (caching) istream. Ignores a UFT Byte Order Mark at
@@ -82,7 +88,8 @@ class input_stream_adapter
     }
 
     explicit input_stream_adapter(std::istream& i)
-        : is(&i), sb(i.rdbuf())
+      : is(&i)
+      , sb(i.rdbuf())
     {}
 
     // delete because of pointer members
@@ -90,7 +97,9 @@ class input_stream_adapter
     input_stream_adapter& operator=(input_stream_adapter&) = delete;
     input_stream_adapter& operator=(input_stream_adapter&& rhs) = delete;
 
-    input_stream_adapter(input_stream_adapter&& rhs) noexcept : is(rhs.is), sb(rhs.sb)
+    input_stream_adapter(input_stream_adapter&& rhs) noexcept
+      : is(rhs.is)
+      , sb(rhs.sb)
     {
         rhs.is = nullptr;
         rhs.sb = nullptr;
@@ -125,7 +134,9 @@ class iterator_input_adapter
     using char_type = typename std::iterator_traits<IteratorType>::value_type;
 
     iterator_input_adapter(IteratorType first, IteratorType last)
-        : current(std::move(first)), end(std::move(last)) {}
+      : current(std::move(first))
+      , end(std::move(last))
+    {}
 
     typename std::char_traits<char_type>::int_type get_character()
     {
@@ -152,9 +163,7 @@ class iterator_input_adapter
     {
         return current == end;
     }
-
 };
-
 
 template<typename BaseInputAdapter, size_t T>
 struct wide_string_input_helper;
@@ -287,7 +296,8 @@ class wide_string_input_adapter
     using char_type = char;
 
     wide_string_input_adapter(BaseInputAdapter base)
-        : base_adapter(base) {}
+      : base_adapter(base)
+    {}
 
     typename std::char_traits<char>::int_type get_character() noexcept
     {
@@ -323,7 +333,6 @@ class wide_string_input_adapter
     /// number of valid bytes in the utf8_codes array
     std::size_t utf8_bytes_filled = 0;
 };
-
 
 template<typename IteratorType, typename Enable = void>
 struct iterator_input_adapter_factory
@@ -400,13 +409,13 @@ inline input_stream_adapter input_adapter(std::istream&& stream)
 using contiguous_bytes_input_adapter = decltype(input_adapter(std::declval<const char*>(), std::declval<const char*>()));
 
 // Null-delimited strings, and the like.
-template < typename CharT,
-           typename std::enable_if <
-               std::is_pointer<CharT>::value&&
-               !std::is_array<CharT>::value&&
-               std::is_integral<typename std::remove_pointer<CharT>::type>::value&&
-               sizeof(typename std::remove_pointer<CharT>::type) == 1,
-               int >::type = 0 >
+template<typename CharT,
+         typename std::enable_if<
+             std::is_pointer<CharT>::value &&
+                 !std::is_array<CharT>::value &&
+                 std::is_integral<typename std::remove_pointer<CharT>::type>::value &&
+                 sizeof(typename std::remove_pointer<CharT>::type) == 1,
+             int>::type = 0>
 contiguous_bytes_input_adapter input_adapter(CharT b)
 {
     auto length = std::strlen(reinterpret_cast<const char*>(b));
@@ -426,21 +435,23 @@ auto input_adapter(T (&array)[N]) -> decltype(input_adapter(array, array + N))
 class span_input_adapter
 {
   public:
-    template < typename CharT,
-               typename std::enable_if <
-                   std::is_pointer<CharT>::value&&
-                   std::is_integral<typename std::remove_pointer<CharT>::type>::value&&
-                   sizeof(typename std::remove_pointer<CharT>::type) == 1,
-                   int >::type = 0 >
+    template<typename CharT,
+             typename std::enable_if<
+                 std::is_pointer<CharT>::value &&
+                     std::is_integral<typename std::remove_pointer<CharT>::type>::value &&
+                     sizeof(typename std::remove_pointer<CharT>::type) == 1,
+                 int>::type = 0>
     span_input_adapter(CharT b, std::size_t l)
-        : ia(reinterpret_cast<const char*>(b), reinterpret_cast<const char*>(b) + l) {}
+      : ia(reinterpret_cast<const char*>(b), reinterpret_cast<const char*>(b) + l)
+    {}
 
     template<class IteratorType,
              typename std::enable_if<
                  std::is_same<typename iterator_traits<IteratorType>::iterator_category, std::random_access_iterator_tag>::value,
                  int>::type = 0>
     span_input_adapter(IteratorType first, IteratorType last)
-        : ia(input_adapter(first, last)) {}
+      : ia(input_adapter(first, last))
+    {}
 
     contiguous_bytes_input_adapter&& get()
     {

@@ -38,13 +38,13 @@ DOCTEST_GCC_SUPPRESS_WARNING("-Wfloat-equal")
 using nlohmann::json;
 #undef private
 
-#include <fstream>
-#include <sstream>
-#include <list>
 #include <cstdio>
+#include <fstream>
+#include <list>
+#include <sstream>
 #include <test_data.hpp>
 
-#if (defined(__cplusplus) && __cplusplus >= 201703L) || (defined(_HAS_CXX17) && _HAS_CXX17 == 1) // fix for issue #464
+#if (defined(__cplusplus) && __cplusplus >= 201703L) || (defined(_HAS_CXX17) && _HAS_CXX17 == 1)  // fix for issue #464
     #define JSON_HAS_CPP_17
 #endif
 
@@ -63,21 +63,26 @@ using float_json = nlohmann::basic_json<std::map, std::vector, std::string, bool
 /////////////////////////////////////////////////////////////////////
 namespace
 {
-struct NonDefaultFromJsonStruct { };
+struct NonDefaultFromJsonStruct
+{};
 
-inline bool operator== (NonDefaultFromJsonStruct const&, NonDefaultFromJsonStruct const&)
+inline bool operator==(NonDefaultFromJsonStruct const&, NonDefaultFromJsonStruct const&)
 {
     return true;
 }
 
-enum class for_1647 { one, two };
+enum class for_1647
+{
+    one,
+    two
+};
 
 NLOHMANN_JSON_SERIALIZE_ENUM(for_1647,
-{
-    {for_1647::one, "one"},
-    {for_1647::two, "two"},
-})
-}
+                             {
+                                 {for_1647::one, "one"},
+                                 {for_1647::two, "two"},
+                             })
+}  // namespace
 
 /////////////////////////////////////////////////////////////////////
 // for #1299
@@ -86,9 +91,12 @@ NLOHMANN_JSON_SERIALIZE_ENUM(for_1647,
 struct Data
 {
     Data() = default;
-    Data(const std::string& a_, const std::string b_) : a(a_), b(b_) {}
-    std::string a {};
-    std::string b {};
+    Data(const std::string& a_, const std::string b_)
+      : a(a_)
+      , b(b_)
+    {}
+    std::string a{};
+    std::string b{};
 };
 
 void from_json(const json& j, Data& data)
@@ -109,15 +117,15 @@ bool operator==(Data const& lhs, Data const& rhs)
 
 namespace nlohmann
 {
-template <>
+template<>
 struct adl_serializer<NonDefaultFromJsonStruct>
 {
-    static NonDefaultFromJsonStruct from_json (json const&) noexcept
+    static NonDefaultFromJsonStruct from_json(json const&) noexcept
     {
         return {};
     }
 };
-}
+}  // namespace nlohmann
 
 /////////////////////////////////////////////////////////////////////
 // for #1805
@@ -128,7 +136,6 @@ struct NotSerializableData
     int mydata;
     float myfloat;
 };
-
 
 TEST_CASE("regression tests 2")
 {
@@ -169,8 +176,7 @@ TEST_CASE("regression tests 2")
                ]
              })";
 
-        json::parser_callback_t cb = [&](int, json::parse_event_t event, json & parsed)
-        {
+        json::parser_callback_t cb = [&](int, json::parse_event_t event, json& parsed) {
             // skip uninteresting events
             if (event == json::parse_event_t::value && !parsed.is_primitive())
             {
@@ -237,22 +243,25 @@ TEST_CASE("regression tests 2")
         using it_type = decltype(p1.begin());
 
         std::set_difference(
-            p1.begin(), p1.end(),
-            p2.begin(), p2.end(),
-            std::inserter(diffs, diffs.end()), [&](const it_type & e1, const it_type & e2) -> bool
-        {
-            using comper_pair = std::pair<std::string, decltype(e1.value())>; // Trying to avoid unneeded copy
-            return comper_pair(e1.key(), e1.value()) < comper_pair(e2.key(), e2.value()); // Using pair comper
-        });
+            p1.begin(),
+            p1.end(),
+            p2.begin(),
+            p2.end(),
+            std::inserter(diffs, diffs.end()),
+            [&](const it_type& e1, const it_type& e2) -> bool {
+                using comper_pair = std::pair<std::string, decltype(e1.value())>;              // Trying to avoid unneeded copy
+                return comper_pair(e1.key(), e1.value()) < comper_pair(e2.key(), e2.value());  // Using pair comper
+            });
 
-        CHECK(diffs.size() == 1); // Note the change here, was 2
+        CHECK(diffs.size() == 1);  // Note the change here, was 2
     }
 
 #ifdef JSON_HAS_CPP_17
     SECTION("issue #1292 - Serializing std::variant causes stack overflow")
     {
         static_assert(
-            !std::is_constructible<json, std::variant<int, float>>::value, "");
+            !std::is_constructible<json, std::variant<int, float>>::value,
+            "");
     }
 #endif
 
@@ -260,14 +269,13 @@ TEST_CASE("regression tests 2")
             "with std::pair")
     {
         json j =
-        {
-            {"1", {{"a", "testa_1"}, {"b", "testb_1"}}},
-            {"2", {{"a", "testa_2"}, {"b", "testb_2"}}},
-            {"3", {{"a", "testa_3"}, {"b", "testb_3"}}},
-        };
+            {
+                {"1", {{"a", "testa_1"}, {"b", "testb_1"}}},
+                {"2", {{"a", "testa_2"}, {"b", "testb_2"}}},
+                {"3", {{"a", "testa_3"}, {"b", "testb_3"}}},
+            };
 
-        std::map<std::string, Data> expected
-        {
+        std::map<std::string, Data> expected{
             {"1", {"testa_1", "testb_1"}},
             {"2", {"testa_2", "testb_2"}},
             {"3", {"testa_3", "testb_3"}},
@@ -316,24 +324,115 @@ TEST_CASE("regression tests 2")
         {
             nlohmann::json dump_test;
             const int data[] =
-            {
-                109,  108,  103,  125,  -122, -53,  115,
-                18,   3,    0,    102,  19,   1,    15,
-                -110, 13,   -3,   -1,   -81,  32,   2,
-                0,    0,    0,    0,    0,    0,    0,
-                8,    0,    0,    0,    0,    0,    0,
-                0,    0,    0,    0,    0,    -80,  2,
-                0,    0,    96,   -118, 46,   -116, 46,
-                109,  -84,  -87,  108,  14,   109,  -24,
-                -83,  13,   -18,  -51,  -83,  -52,  -115,
-                14,   6,    32,   0,    0,    0,    0,
-                0,    0,    0,    0,    0,    0,    0,
-                64,   3,    0,    0,    0,    35,   -74,
-                -73,  55,   57,   -128, 0,    0,    0,
-                0,    0,    0,    0,    0,    0,    0,
-                0,    0,    33,   0,    0,    0,    -96,
-                -54,  -28,  -26
-            };
+                {
+                    109,
+                    108,
+                    103,
+                    125,
+                    -122,
+                    -53,
+                    115,
+                    18,
+                    3,
+                    0,
+                    102,
+                    19,
+                    1,
+                    15,
+                    -110,
+                    13,
+                    -3,
+                    -1,
+                    -81,
+                    32,
+                    2,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    8,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    -80,
+                    2,
+                    0,
+                    0,
+                    96,
+                    -118,
+                    46,
+                    -116,
+                    46,
+                    109,
+                    -84,
+                    -87,
+                    108,
+                    14,
+                    109,
+                    -24,
+                    -83,
+                    13,
+                    -18,
+                    -51,
+                    -83,
+                    -52,
+                    -115,
+                    14,
+                    6,
+                    32,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    64,
+                    3,
+                    0,
+                    0,
+                    0,
+                    35,
+                    -74,
+                    -73,
+                    55,
+                    57,
+                    -128,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    33,
+                    0,
+                    0,
+                    0,
+                    -96,
+                    -54,
+                    -28,
+                    -26};
             std::string s;
             for (unsigned i = 0; i < sizeof(data) / sizeof(int); i++)
             {
@@ -392,7 +491,7 @@ TEST_CASE("regression tests 2")
 
         SECTION("string array")
         {
-            const char input[] = { 'B', 0x00 };
+            const char input[] = {'B', 0x00};
             json cbor = json::from_cbor(input, true, false);
             CHECK(cbor.is_discarded());
         }
@@ -430,12 +529,11 @@ TEST_CASE("regression tests 2")
         const unsigned char data[] = {0x81, 0xA4, 0x64, 0x61, 0x74, 0x61, 0xC4, 0x0F, 0x33, 0x30, 0x30, 0x32, 0x33, 0x34, 0x30, 0x31, 0x30, 0x37, 0x30, 0x35, 0x30, 0x31, 0x30};
         json j = json::from_msgpack(data, sizeof(data) / sizeof(data[0]));
         CHECK_NOTHROW(
-            j.dump(4,                              // Indent
-                   ' ',                            // Indent char
-                   false,                          // Ensure ascii
+            j.dump(4,                             // Indent
+                   ' ',                           // Indent char
+                   false,                         // Ensure ascii
                    json::error_handler_t::strict  // Error
-                  )
-        );
+                   ));
     }
 
     SECTION("PR #2181 - regression bug with lvalue")
@@ -450,9 +548,17 @@ TEST_CASE("regression tests 2")
     SECTION("issue #2293 - eof doesnt cause parsing to stop")
     {
         std::vector<uint8_t> data =
-        {
-            0x7B, 0x6F, 0x62, 0x6A, 0x65, 0x63, 0x74, 0x20, 0x4F, 0x42
-        };
+            {
+                0x7B,
+                0x6F,
+                0x62,
+                0x6A,
+                0x65,
+                0x63,
+                0x74,
+                0x20,
+                0x4F,
+                0x42};
         json result = json::from_cbor(data, true, false);
         CHECK(result.is_discarded());
     }
@@ -468,8 +574,7 @@ TEST_CASE("regression tests 2")
         CHECK(jsonAnimals == jsonAnimals_parsed);
 
         std::vector<std::pair<std::string, int64_t>> intData = {std::make_pair("aaaa", 11),
-                                                                std::make_pair("bbb", 222)
-                                                               };
+                                                                std::make_pair("bbb", 222)};
         nlohmann::ordered_json jsonObj;
         for (const auto& data : intData)
         {

@@ -33,20 +33,21 @@ DOCTEST_GCC_SUPPRESS_WARNING("-Wfloat-equal")
 #include <nlohmann/json.hpp>
 using nlohmann::json;
 
+#include "test_utils.hpp"
 #include <fstream>
-#include <sstream>
 #include <iomanip>
 #include <iostream>
 #include <set>
+#include <sstream>
 #include <test_data.hpp>
-#include "test_utils.hpp"
 
 namespace
 {
 class SaxCountdown
 {
   public:
-    explicit SaxCountdown(const int count) : events_left(count)
+    explicit SaxCountdown(const int count)
+      : events_left(count)
     {}
 
     bool null()
@@ -117,7 +118,7 @@ class SaxCountdown
   private:
     int events_left = 0;
 };
-}
+}  // namespace
 
 TEST_CASE("CBOR")
 {
@@ -518,9 +519,10 @@ TEST_CASE("CBOR")
                 SECTION("65536..4294967295")
                 {
                     for (uint32_t i :
-                            {
-                                65536u, 77777u, 1048576u
-                            })
+                         {
+                             65536u,
+                             77777u,
+                             1048576u})
                     {
                         CAPTURE(i)
 
@@ -561,9 +563,9 @@ TEST_CASE("CBOR")
                 SECTION("4294967296..4611686018427387903")
                 {
                     for (uint64_t i :
-                            {
-                                4294967296ul, 4611686018427387903ul
-                            })
+                         {
+                             4294967296ul,
+                             4611686018427387903ul})
                     {
                         CAPTURE(i)
 
@@ -745,9 +747,10 @@ TEST_CASE("CBOR")
                 SECTION("65536..4294967295 (four-byte uint32_t)")
                 {
                     for (uint32_t i :
-                            {
-                                65536u, 77777u, 1048576u
-                            })
+                         {
+                             65536u,
+                             77777u,
+                             1048576u})
                     {
                         CAPTURE(i)
 
@@ -787,9 +790,9 @@ TEST_CASE("CBOR")
                 SECTION("4294967296..4611686018427387903 (eight-byte uint64_t)")
                 {
                     for (uint64_t i :
-                            {
-                                4294967296ul, 4611686018427387903ul
-                            })
+                         {
+                             4294967296ul,
+                             4611686018427387903ul})
                     {
                         CAPTURE(i)
 
@@ -842,9 +845,16 @@ TEST_CASE("CBOR")
                     double v = 3.1415925;
                     json j = v;
                     std::vector<uint8_t> expected =
-                    {
-                        0xfb, 0x40, 0x09, 0x21, 0xfb, 0x3f, 0xa6, 0xde, 0xfc
-                    };
+                        {
+                            0xfb,
+                            0x40,
+                            0x09,
+                            0x21,
+                            0xfb,
+                            0x3f,
+                            0xa6,
+                            0xde,
+                            0xfc};
                     const auto result = json::to_cbor(j);
                     CHECK(result == expected);
 
@@ -929,9 +939,12 @@ TEST_CASE("CBOR")
                     float v = (std::numeric_limits<float>::max)();
                     json j = v;
                     std::vector<uint8_t> expected =
-                    {
-                        0xfa, 0x7f, 0x7f, 0xff, 0xff
-                    };
+                        {
+                            0xfa,
+                            0x7f,
+                            0x7f,
+                            0xff,
+                            0xff};
                     const auto result = json::to_cbor(j);
                     CHECK(result == expected);
                     // roundtrip
@@ -943,9 +956,12 @@ TEST_CASE("CBOR")
                     double v = static_cast<double>(std::numeric_limits<float>::lowest());
                     json j = v;
                     std::vector<uint8_t> expected =
-                    {
-                        0xfa, 0xff, 0x7f, 0xff, 0xff
-                    };
+                        {
+                            0xfa,
+                            0xff,
+                            0x7f,
+                            0xff,
+                            0xff};
                     const auto result = json::to_cbor(j);
                     CHECK(result == expected);
                     // roundtrip
@@ -957,9 +973,16 @@ TEST_CASE("CBOR")
                     double v = static_cast<double>((std::numeric_limits<float>::max)()) + 0.1e+34;
                     json j = v;
                     std::vector<uint8_t> expected =
-                    {
-                        0xfb, 0x47, 0xf0, 0x00, 0x03, 0x04, 0xdc, 0x64, 0x49
-                    };
+                        {
+                            0xfb,
+                            0x47,
+                            0xf0,
+                            0x00,
+                            0x03,
+                            0x04,
+                            0xdc,
+                            0x64,
+                            0x49};
                     // double
                     const auto result = json::to_cbor(j);
                     CHECK(result == expected);
@@ -972,9 +995,12 @@ TEST_CASE("CBOR")
                     double v = static_cast<double>(std::numeric_limits<float>::lowest()) - 1.0;
                     json j = v;
                     std::vector<uint8_t> expected =
-                    {
-                        0xfa, 0xff, 0x7f, 0xff, 0xff
-                    };
+                        {
+                            0xfa,
+                            0xff,
+                            0x7f,
+                            0xff,
+                            0xff};
                     // the same with lowest float
                     const auto result = json::to_cbor(j);
                     CHECK(result == expected);
@@ -982,7 +1008,6 @@ TEST_CASE("CBOR")
                     CHECK(json::from_cbor(result) == j);
                     CHECK(json::from_cbor(result) == v);
                 }
-
             }
 
             SECTION("half-precision float (edge cases)")
@@ -1163,9 +1188,13 @@ TEST_CASE("CBOR")
             SECTION("N = 256..65535")
             {
                 for (size_t N :
-                        {
-                            256u, 999u, 1025u, 3333u, 2048u, 65535u
-                        })
+                     {
+                         256u,
+                         999u,
+                         1025u,
+                         3333u,
+                         2048u,
+                         65535u})
                 {
                     CAPTURE(N)
 
@@ -1196,9 +1225,10 @@ TEST_CASE("CBOR")
             SECTION("N = 65536..4294967295")
             {
                 for (size_t N :
-                        {
-                            65536u, 77777u, 1048576u
-                        })
+                     {
+                         65536u,
+                         77777u,
+                         1048576u})
                 {
                     CAPTURE(N)
 
@@ -1282,10 +1312,10 @@ TEST_CASE("CBOR")
             SECTION("array with uint16_t elements")
             {
                 json j(257, nullptr);
-                std::vector<uint8_t> expected(j.size() + 3, 0xf6); // all null
-                expected[0] = 0x99; // array 16 bit
-                expected[1] = 0x01; // size (0x0101), byte 0
-                expected[2] = 0x01; // size (0x0101), byte 1
+                std::vector<uint8_t> expected(j.size() + 3, 0xf6);  // all null
+                expected[0] = 0x99;                                 // array 16 bit
+                expected[1] = 0x01;                                 // size (0x0101), byte 0
+                expected[2] = 0x01;                                 // size (0x0101), byte 1
                 const auto result = json::to_cbor(j);
                 CHECK(result == expected);
 
@@ -1297,12 +1327,12 @@ TEST_CASE("CBOR")
             SECTION("array with uint32_t elements")
             {
                 json j(65793, nullptr);
-                std::vector<uint8_t> expected(j.size() + 5, 0xf6); // all null
-                expected[0] = 0x9a; // array 32 bit
-                expected[1] = 0x00; // size (0x00010101), byte 0
-                expected[2] = 0x01; // size (0x00010101), byte 1
-                expected[3] = 0x01; // size (0x00010101), byte 2
-                expected[4] = 0x01; // size (0x00010101), byte 3
+                std::vector<uint8_t> expected(j.size() + 5, 0xf6);  // all null
+                expected[0] = 0x9a;                                 // array 32 bit
+                expected[1] = 0x00;                                 // size (0x00010101), byte 0
+                expected[2] = 0x01;                                 // size (0x00010101), byte 1
+                expected[3] = 0x01;                                 // size (0x00010101), byte 2
+                expected[4] = 0x01;                                 // size (0x00010101), byte 3
                 const auto result = json::to_cbor(j);
                 CHECK(result == expected);
 
@@ -1342,9 +1372,17 @@ TEST_CASE("CBOR")
             {
                 json j = json::parse("{\"a\": {\"b\": {\"c\": {}}}}");
                 std::vector<uint8_t> expected =
-                {
-                    0xa1, 0x61, 0x61, 0xa1, 0x61, 0x62, 0xa1, 0x61, 0x63, 0xa0
-                };
+                    {
+                        0xa1,
+                        0x61,
+                        0x61,
+                        0xa1,
+                        0x61,
+                        0x62,
+                        0xa1,
+                        0x61,
+                        0x63,
+                        0xa0};
                 const auto result = json::to_cbor(j);
                 CHECK(result == expected);
 
@@ -1372,9 +1410,9 @@ TEST_CASE("CBOR")
                 // pairs are made. We therefore only check the prefix (type and
                 // size and the overall size. The rest is then handled in the
                 // roundtrip check.
-                CHECK(result.size() == 1787); // 1 type, 1 size, 255*7 content
-                CHECK(result[0] == 0xb8); // map 8 bit
-                CHECK(result[1] == 0xff); // size byte (0xff)
+                CHECK(result.size() == 1787);  // 1 type, 1 size, 255*7 content
+                CHECK(result[0] == 0xb8);      // map 8 bit
+                CHECK(result[1] == 0xff);      // size byte (0xff)
                 // roundtrip
                 CHECK(json::from_cbor(result) == j);
                 CHECK(json::from_cbor(result, true, false) == j);
@@ -1399,10 +1437,10 @@ TEST_CASE("CBOR")
                 // pairs are made. We therefore only check the prefix (type and
                 // size and the overall size. The rest is then handled in the
                 // roundtrip check.
-                CHECK(result.size() == 1795); // 1 type, 2 size, 256*7 content
-                CHECK(result[0] == 0xb9); // map 16 bit
-                CHECK(result[1] == 0x01); // byte 0 of size (0x0100)
-                CHECK(result[2] == 0x00); // byte 1 of size (0x0100)
+                CHECK(result.size() == 1795);  // 1 type, 2 size, 256*7 content
+                CHECK(result[0] == 0xb9);      // map 16 bit
+                CHECK(result[1] == 0x01);      // byte 0 of size (0x0100)
+                CHECK(result[2] == 0x00);      // byte 1 of size (0x0100)
 
                 // roundtrip
                 CHECK(json::from_cbor(result) == j);
@@ -1428,12 +1466,12 @@ TEST_CASE("CBOR")
                 // pairs are made. We therefore only check the prefix (type and
                 // size and the overall size. The rest is then handled in the
                 // roundtrip check.
-                CHECK(result.size() == 458757); // 1 type, 4 size, 65536*7 content
-                CHECK(result[0] == 0xba); // map 32 bit
-                CHECK(result[1] == 0x00); // byte 0 of size (0x00010000)
-                CHECK(result[2] == 0x01); // byte 1 of size (0x00010000)
-                CHECK(result[3] == 0x00); // byte 2 of size (0x00010000)
-                CHECK(result[4] == 0x00); // byte 3 of size (0x00010000)
+                CHECK(result.size() == 458757);  // 1 type, 4 size, 65536*7 content
+                CHECK(result[0] == 0xba);        // map 32 bit
+                CHECK(result[1] == 0x00);        // byte 0 of size (0x00010000)
+                CHECK(result[2] == 0x01);        // byte 1 of size (0x00010000)
+                CHECK(result[3] == 0x00);        // byte 2 of size (0x00010000)
+                CHECK(result[4] == 0x00);        // byte 3 of size (0x00010000)
 
                 // roundtrip
                 CHECK(json::from_cbor(result) == j);
@@ -1512,9 +1550,13 @@ TEST_CASE("CBOR")
             SECTION("N = 256..65535")
             {
                 for (size_t N :
-                        {
-                            256u, 999u, 1025u, 3333u, 2048u, 65535u
-                        })
+                     {
+                         256u,
+                         999u,
+                         1025u,
+                         3333u,
+                         2048u,
+                         65535u})
                 {
                     CAPTURE(N)
 
@@ -1545,9 +1587,10 @@ TEST_CASE("CBOR")
             SECTION("N = 65536..4294967295")
             {
                 for (size_t N :
-                        {
-                            65536u, 77777u, 1048576u
-                        })
+                     {
+                         65536u,
+                         77777u,
+                         1048576u})
                 {
                     CAPTURE(N)
 
@@ -1608,8 +1651,7 @@ TEST_CASE("CBOR")
 
                 // callback to set binary_seen to true if a binary value was seen
                 bool binary_seen = false;
-                auto callback = [&binary_seen](int /*depth*/, json::parse_event_t /*event*/, json & parsed)
-                {
+                auto callback = [&binary_seen](int /*depth*/, json::parse_event_t /*event*/, json& parsed) {
                     if (parsed.is_binary())
                     {
                         binary_seen = true;
@@ -1630,36 +1672,28 @@ TEST_CASE("CBOR")
     {
         SECTION("0x5b (byte array)")
         {
-            std::vector<uint8_t> given = {0x5b, 0x00, 0x00, 0x00, 0x00,
-                                          0x00, 0x00, 0x00, 0x01, 0x61
-                                         };
+            std::vector<uint8_t> given = {0x5b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x61};
             json j = json::from_cbor(given);
-            CHECK(j == json::binary(std::vector<uint8_t> {'a'}));
+            CHECK(j == json::binary(std::vector<uint8_t>{'a'}));
         }
 
         SECTION("0x7b (string)")
         {
-            std::vector<uint8_t> given = {0x7b, 0x00, 0x00, 0x00, 0x00,
-                                          0x00, 0x00, 0x00, 0x01, 0x61
-                                         };
+            std::vector<uint8_t> given = {0x7b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x61};
             json j = json::from_cbor(given);
             CHECK(j == "a");
         }
 
         SECTION("0x9b (array)")
         {
-            std::vector<uint8_t> given = {0x9b, 0x00, 0x00, 0x00, 0x00,
-                                          0x00, 0x00, 0x00, 0x01, 0xf4
-                                         };
+            std::vector<uint8_t> given = {0x9b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xf4};
             json j = json::from_cbor(given);
             CHECK(j == json::parse("[false]"));
         }
 
         SECTION("0xbb (map)")
         {
-            std::vector<uint8_t> given = {0xbb, 0x00, 0x00, 0x00, 0x00,
-                                          0x00, 0x00, 0x00, 0x01, 0x60, 0xf4
-                                         };
+            std::vector<uint8_t> given = {0xbb, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x60, 0xf4};
             json j = json::from_cbor(given);
             CHECK(j == json::parse("{\"\": false}"));
         }
@@ -1810,42 +1844,98 @@ TEST_CASE("CBOR")
             SECTION("all unsupported bytes")
             {
                 for (auto byte :
-                        {
-                            // ?
-                            0x1c, 0x1d, 0x1e, 0x1f,
-                            // ?
-                            0x3c, 0x3d, 0x3e, 0x3f,
-                            // ?
-                            0x5c, 0x5d, 0x5e,
-                            // ?
-                            0x7c, 0x7d, 0x7e,
-                            // ?
-                            0x9c, 0x9d, 0x9e,
-                            // ?
-                            0xbc, 0xbd, 0xbe,
-                            // date/time
-                            0xc0, 0xc1,
-                            // bignum
-                            0xc2, 0xc3,
-                            // fraction
-                            0xc4,
-                            // bigfloat
-                            0xc5,
-                            // tagged item
-                            0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4,
-                            // expected conversion
-                            0xd5, 0xd6, 0xd7,
-                            // more tagged items
-                            0xd8, 0xd9, 0xda, 0xdb,
-                            // ?
-                            0xdc, 0xdd, 0xde, 0xdf,
-                            // (simple value)
-                            0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee, 0xef, 0xf0, 0xf1, 0xf2, 0xf3,
-                            // undefined
-                            0xf7,
-                            // simple value
-                            0xf8
-                        })
+                     {
+                         // ?
+                         0x1c,
+                         0x1d,
+                         0x1e,
+                         0x1f,
+                         // ?
+                         0x3c,
+                         0x3d,
+                         0x3e,
+                         0x3f,
+                         // ?
+                         0x5c,
+                         0x5d,
+                         0x5e,
+                         // ?
+                         0x7c,
+                         0x7d,
+                         0x7e,
+                         // ?
+                         0x9c,
+                         0x9d,
+                         0x9e,
+                         // ?
+                         0xbc,
+                         0xbd,
+                         0xbe,
+                         // date/time
+                         0xc0,
+                         0xc1,
+                         // bignum
+                         0xc2,
+                         0xc3,
+                         // fraction
+                         0xc4,
+                         // bigfloat
+                         0xc5,
+                         // tagged item
+                         0xc6,
+                         0xc7,
+                         0xc8,
+                         0xc9,
+                         0xca,
+                         0xcb,
+                         0xcc,
+                         0xcd,
+                         0xce,
+                         0xcf,
+                         0xd0,
+                         0xd1,
+                         0xd2,
+                         0xd3,
+                         0xd4,
+                         // expected conversion
+                         0xd5,
+                         0xd6,
+                         0xd7,
+                         // more tagged items
+                         0xd8,
+                         0xd9,
+                         0xda,
+                         0xdb,
+                         // ?
+                         0xdc,
+                         0xdd,
+                         0xde,
+                         0xdf,
+                         // (simple value)
+                         0xe0,
+                         0xe1,
+                         0xe2,
+                         0xe3,
+                         0xe4,
+                         0xe5,
+                         0xe6,
+                         0xe7,
+                         0xe8,
+                         0xe9,
+                         0xea,
+                         0xeb,
+                         0xec,
+                         0xed,
+                         0xee,
+                         0xef,
+                         0xf0,
+                         0xf1,
+                         0xf2,
+                         0xf3,
+                         // undefined
+                         0xf7,
+                         // simple value
+                         0xf8})
                 {
                     json _;
                     CHECK_THROWS_AS(_ = json::from_cbor(std::vector<uint8_t>({static_cast<uint8_t>(byte)})), json::parse_error&);
@@ -1964,29 +2054,28 @@ TEST_CASE("CBOR regressions")
         detected.
         */
         for (std::string filename :
-                {
-                    TEST_DATA_DIRECTORY "/cbor_regression/test01",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test02",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test03",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test04",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test05",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test06",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test07",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test08",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test09",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test10",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test11",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test12",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test13",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test14",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test15",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test16",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test17",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test18",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test19",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test20",
-                    TEST_DATA_DIRECTORY "/cbor_regression/test21"
-                })
+             {
+                 TEST_DATA_DIRECTORY "/cbor_regression/test01",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test02",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test03",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test04",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test05",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test06",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test07",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test08",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test09",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test10",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test11",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test12",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test13",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test14",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test15",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test16",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test17",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test18",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test19",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test20",
+                 TEST_DATA_DIRECTORY "/cbor_regression/test21"})
         {
             CAPTURE(filename)
 
@@ -2027,14 +2116,13 @@ TEST_CASE("CBOR roundtrips" * doctest::skip())
     SECTION("input from flynn")
     {
         // most of these are excluded due to differences in key order (not a real problem)
-        auto exclude_packed = std::set<std::string>
-        {
+        auto exclude_packed = std::set<std::string>{
             TEST_DATA_DIRECTORY "/json.org/1.json",
             TEST_DATA_DIRECTORY "/json.org/2.json",
             TEST_DATA_DIRECTORY "/json.org/3.json",
             TEST_DATA_DIRECTORY "/json.org/4.json",
             TEST_DATA_DIRECTORY "/json.org/5.json",
-            TEST_DATA_DIRECTORY "/json_testsuite/sample.json", // kills AppVeyor
+            TEST_DATA_DIRECTORY "/json_testsuite/sample.json",  // kills AppVeyor
             TEST_DATA_DIRECTORY "/json_tests/pass1.json",
             TEST_DATA_DIRECTORY "/regression/working_file.json",
             TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object.json",
@@ -2043,153 +2131,152 @@ TEST_CASE("CBOR roundtrips" * doctest::skip())
         };
 
         for (std::string filename :
-                {
-                    TEST_DATA_DIRECTORY "/json_nlohmann_tests/all_unicode.json",
-                    TEST_DATA_DIRECTORY "/json.org/1.json",
-                    TEST_DATA_DIRECTORY "/json.org/2.json",
-                    TEST_DATA_DIRECTORY "/json.org/3.json",
-                    TEST_DATA_DIRECTORY "/json.org/4.json",
-                    TEST_DATA_DIRECTORY "/json.org/5.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip01.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip02.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip03.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip04.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip05.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip06.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip07.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip08.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip09.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip10.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip11.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip12.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip13.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip14.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip15.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip16.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip17.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip18.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip19.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip20.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip21.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip22.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip23.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip24.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip25.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip26.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip27.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip28.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip29.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip30.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip31.json",
-                    TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip32.json",
-                    TEST_DATA_DIRECTORY "/json_testsuite/sample.json", // kills AppVeyor
-                    TEST_DATA_DIRECTORY "/json_tests/pass1.json",
-                    TEST_DATA_DIRECTORY "/json_tests/pass2.json",
-                    TEST_DATA_DIRECTORY "/json_tests/pass3.json",
-                    TEST_DATA_DIRECTORY "/regression/floats.json",
-                    TEST_DATA_DIRECTORY "/regression/signed_ints.json",
-                    TEST_DATA_DIRECTORY "/regression/unsigned_ints.json",
-                    TEST_DATA_DIRECTORY "/regression/working_file.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_arraysWithSpaces.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_empty-string.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_empty.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_ending_with_newline.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_false.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_heterogeneous.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_null.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_with_1_and_newline.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_with_leading_space.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_with_several_null.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_with_trailing_space.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_0e+1.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_0e1.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_after_space.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_double_close_to_zero.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_double_huge_neg_exp.json",
-                    //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_huge_exp.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_int_with_exp.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_minus_zero.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_negative_int.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_negative_one.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_negative_zero.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_capital_e.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_capital_e_neg_exp.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_capital_e_pos_exp.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_exponent.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_fraction_exponent.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_neg_exp.json",
-                    //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_neg_overflow.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_pos_exponent.json",
-                    //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_pos_overflow.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_underflow.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_simple_int.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_simple_real.json",
-                    //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_too_big_neg_int.json",
-                    //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_too_big_pos_int.json",
-                    //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_very_big_negative_int.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_basic.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_duplicated_key.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_duplicated_key_and_value.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_empty.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_empty_key.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_escaped_null_in_key.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_extreme_numbers.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_long_strings.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_simple.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_string_unicode.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_with_newlines.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_1_2_3_bytes_UTF-8_sequences.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_UTF-16_Surrogates_U+1D11E_MUSICAL_SYMBOL_G_CLEF.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_accepted_surrogate_pair.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_accepted_surrogate_pairs.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_allowed_escapes.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_backslash_and_u_escaped_zero.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_backslash_doublequotes.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_comments.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_double_escape_a.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_double_escape_n.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_escaped_control_character.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_escaped_noncharacter.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_in_array.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_in_array_with_leading_space.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_last_surrogates_1_and_2.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_newline_uescaped.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_nonCharacterInUTF-8_U+10FFFF.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_nonCharacterInUTF-8_U+1FFFF.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_nonCharacterInUTF-8_U+FFFF.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_null_escape.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_one-byte-utf-8.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_pi.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_simple_ascii.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_space.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_three-byte-utf-8.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_two-byte-utf-8.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_u+2028_line_sep.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_u+2029_par_sep.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_uEscape.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unescaped_char_delete.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicodeEscapedBackslash.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode_2.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode_U+200B_ZERO_WIDTH_SPACE.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode_U+2064_invisible_plus.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode_escaped_double_quote.json",
-                    // TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_utf16.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_utf8.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_with_del_character.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_false.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_int.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_negative_real.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_null.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_string.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_true.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_string_empty.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_trailing_newline.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_true_in_array.json",
-                    TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_whitespace_array.json"
-                })
+             {
+                 TEST_DATA_DIRECTORY "/json_nlohmann_tests/all_unicode.json",
+                 TEST_DATA_DIRECTORY "/json.org/1.json",
+                 TEST_DATA_DIRECTORY "/json.org/2.json",
+                 TEST_DATA_DIRECTORY "/json.org/3.json",
+                 TEST_DATA_DIRECTORY "/json.org/4.json",
+                 TEST_DATA_DIRECTORY "/json.org/5.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip01.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip02.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip03.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip04.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip05.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip06.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip07.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip08.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip09.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip10.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip11.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip12.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip13.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip14.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip15.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip16.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip17.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip18.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip19.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip20.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip21.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip22.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip23.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip24.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip25.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip26.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip27.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip28.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip29.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip30.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip31.json",
+                 TEST_DATA_DIRECTORY "/json_roundtrip/roundtrip32.json",
+                 TEST_DATA_DIRECTORY "/json_testsuite/sample.json",  // kills AppVeyor
+                 TEST_DATA_DIRECTORY "/json_tests/pass1.json",
+                 TEST_DATA_DIRECTORY "/json_tests/pass2.json",
+                 TEST_DATA_DIRECTORY "/json_tests/pass3.json",
+                 TEST_DATA_DIRECTORY "/regression/floats.json",
+                 TEST_DATA_DIRECTORY "/regression/signed_ints.json",
+                 TEST_DATA_DIRECTORY "/regression/unsigned_ints.json",
+                 TEST_DATA_DIRECTORY "/regression/working_file.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_arraysWithSpaces.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_empty-string.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_empty.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_ending_with_newline.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_false.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_heterogeneous.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_null.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_with_1_and_newline.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_with_leading_space.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_with_several_null.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_array_with_trailing_space.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_0e+1.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_0e1.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_after_space.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_double_close_to_zero.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_double_huge_neg_exp.json",
+                 //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_huge_exp.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_int_with_exp.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_minus_zero.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_negative_int.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_negative_one.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_negative_zero.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_capital_e.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_capital_e_neg_exp.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_capital_e_pos_exp.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_exponent.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_fraction_exponent.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_neg_exp.json",
+                 //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_neg_overflow.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_pos_exponent.json",
+                 //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_pos_overflow.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_real_underflow.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_simple_int.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_simple_real.json",
+                 //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_too_big_neg_int.json",
+                 //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_too_big_pos_int.json",
+                 //TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_number_very_big_negative_int.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_basic.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_duplicated_key.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_duplicated_key_and_value.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_empty.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_empty_key.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_escaped_null_in_key.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_extreme_numbers.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_long_strings.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_simple.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_string_unicode.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_object_with_newlines.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_1_2_3_bytes_UTF-8_sequences.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_UTF-16_Surrogates_U+1D11E_MUSICAL_SYMBOL_G_CLEF.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_accepted_surrogate_pair.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_accepted_surrogate_pairs.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_allowed_escapes.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_backslash_and_u_escaped_zero.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_backslash_doublequotes.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_comments.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_double_escape_a.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_double_escape_n.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_escaped_control_character.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_escaped_noncharacter.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_in_array.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_in_array_with_leading_space.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_last_surrogates_1_and_2.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_newline_uescaped.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_nonCharacterInUTF-8_U+10FFFF.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_nonCharacterInUTF-8_U+1FFFF.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_nonCharacterInUTF-8_U+FFFF.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_null_escape.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_one-byte-utf-8.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_pi.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_simple_ascii.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_space.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_three-byte-utf-8.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_two-byte-utf-8.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_u+2028_line_sep.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_u+2029_par_sep.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_uEscape.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unescaped_char_delete.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicodeEscapedBackslash.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode_2.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode_U+200B_ZERO_WIDTH_SPACE.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode_U+2064_invisible_plus.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_unicode_escaped_double_quote.json",
+                 // TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_utf16.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_utf8.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_string_with_del_character.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_false.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_int.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_negative_real.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_null.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_string.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_lonely_true.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_string_empty.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_trailing_newline.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_true_in_array.json",
+                 TEST_DATA_DIRECTORY "/nst_json_testsuite/test_parsing/y_structure_whitespace_array.json"})
         {
             CAPTURE(filename)
 
@@ -2266,47 +2353,101 @@ TEST_CASE("all CBOR first bytes")
 {
     // these bytes will fail immediately with exception parse_error.112
     std::set<uint8_t> unsupported =
-    {
-        //// types not supported by this library
+        {
+            //// types not supported by this library
 
-        // date/time
-        0xc0, 0xc1,
-        // bignum
-        0xc2, 0xc3,
-        // decimal fracion
-        0xc4,
-        // bigfloat
-        0xc5,
-        // tagged item
-        0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd,
-        0xce, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd8,
-        0xd9, 0xda, 0xdb,
-        // expected conversion
-        0xd5, 0xd6, 0xd7,
-        // simple value
-        0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7,
-        0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xef, 0xf0,
-        0xf1, 0xf2, 0xf3,
-        0xf8,
-        // undefined
-        0xf7,
+            // date/time
+            0xc0,
+            0xc1,
+            // bignum
+            0xc2,
+            0xc3,
+            // decimal fracion
+            0xc4,
+            // bigfloat
+            0xc5,
+            // tagged item
+            0xc6,
+            0xc7,
+            0xc8,
+            0xc9,
+            0xca,
+            0xcb,
+            0xcc,
+            0xcd,
+            0xce,
+            0xcf,
+            0xd0,
+            0xd1,
+            0xd2,
+            0xd3,
+            0xd4,
+            0xd8,
+            0xd9,
+            0xda,
+            0xdb,
+            // expected conversion
+            0xd5,
+            0xd6,
+            0xd7,
+            // simple value
+            0xe0,
+            0xe1,
+            0xe2,
+            0xe3,
+            0xe4,
+            0xe5,
+            0xe6,
+            0xe7,
+            0xe8,
+            0xe9,
+            0xea,
+            0xeb,
+            0xec,
+            0xed,
+            0xef,
+            0xf0,
+            0xf1,
+            0xf2,
+            0xf3,
+            0xf8,
+            // undefined
+            0xf7,
 
-        //// bytes not specified by CBOR
+            //// bytes not specified by CBOR
 
-        0x1c, 0x1d, 0x1e, 0x1f,
-        0x3c, 0x3d, 0x3e, 0x3f,
-        0x5c, 0x5d, 0x5e,
-        0x7c, 0x7d, 0x7e,
-        0x9c, 0x9d, 0x9e,
-        0xbc, 0xbd, 0xbe,
-        0xdc, 0xdd, 0xde, 0xdf,
-        0xee,
-        0xfc, 0xfe, 0xfd,
+            0x1c,
+            0x1d,
+            0x1e,
+            0x1f,
+            0x3c,
+            0x3d,
+            0x3e,
+            0x3f,
+            0x5c,
+            0x5d,
+            0x5e,
+            0x7c,
+            0x7d,
+            0x7e,
+            0x9c,
+            0x9d,
+            0x9e,
+            0xbc,
+            0xbd,
+            0xbe,
+            0xdc,
+            0xdd,
+            0xde,
+            0xdf,
+            0xee,
+            0xfc,
+            0xfe,
+            0xfd,
 
-        /// break cannot be the first byte
+            /// break cannot be the first byte
 
-        0xff
-    };
+            0xff};
 
     for (auto i = 0; i < 256; ++i)
     {
@@ -2487,7 +2628,7 @@ TEST_CASE("examples from RFC 7049 Appendix A")
         auto expected = utils::read_binary_file(TEST_DATA_DIRECTORY "/binary_data/cbor_binary.out");
         CHECK(j == json::binary(expected));
 
-        CHECK(json::to_cbor(json::binary(std::vector<uint8_t> {}, 0x42)) == std::vector<uint8_t> {0xd8, 0x42, 0x40});
+        CHECK(json::to_cbor(json::binary(std::vector<uint8_t>{}, 0x42)) == std::vector<uint8_t>{0xd8, 0x42, 0x40});
     }
 
     SECTION("arrays")
@@ -2541,10 +2682,22 @@ TEST_CASE("Tagged values")
 
     SECTION("0xC6..0xD4")
     {
-        for (auto b : std::vector<std::uint8_t>
-    {
-        0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4
-    })
+        for (auto b : std::vector<std::uint8_t>{
+                 0xC6,
+                 0xC7,
+                 0xC8,
+                 0xC9,
+                 0xCA,
+                 0xCB,
+                 0xCC,
+                 0xCD,
+                 0xCE,
+                 0xCF,
+                 0xD0,
+                 0xD1,
+                 0xD2,
+                 0xD3,
+                 0xD4})
         {
             // add tag to value
             auto v_tagged = v;
@@ -2566,8 +2719,8 @@ TEST_CASE("Tagged values")
         {
             // add tag to value
             auto v_tagged = v;
-            v_tagged.insert(v_tagged.begin(), 0x42); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0xD8); // tag
+            v_tagged.insert(v_tagged.begin(), 0x42);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0xD8);  // tag
 
             // check that parsing fails in error mode
             CHECK_THROWS_AS(json::from_cbor(v_tagged), json::parse_error);
@@ -2582,7 +2735,7 @@ TEST_CASE("Tagged values")
         {
             // add tag to value
             auto v_tagged = v;
-            v_tagged.insert(v_tagged.begin(), 0xD8); // tag
+            v_tagged.insert(v_tagged.begin(), 0xD8);  // tag
 
             // check that parsing fails in all modes
             CHECK_THROWS_AS(json::from_cbor(v_tagged), json::parse_error);
@@ -2597,9 +2750,9 @@ TEST_CASE("Tagged values")
         {
             // add tag to value
             auto v_tagged = v;
-            v_tagged.insert(v_tagged.begin(), 0x42); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x23); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0xD9); // tag
+            v_tagged.insert(v_tagged.begin(), 0x42);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x23);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0xD9);  // tag
 
             // check that parsing fails in error mode
             CHECK_THROWS_AS(json::from_cbor(v_tagged), json::parse_error);
@@ -2614,8 +2767,8 @@ TEST_CASE("Tagged values")
         {
             // add tag to value
             auto v_tagged = v;
-            v_tagged.insert(v_tagged.begin(), 0x23); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0xD9); // tag
+            v_tagged.insert(v_tagged.begin(), 0x23);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0xD9);  // tag
 
             // check that parsing fails in all modes
             CHECK_THROWS_AS(json::from_cbor(v_tagged), json::parse_error);
@@ -2630,11 +2783,11 @@ TEST_CASE("Tagged values")
         {
             // add tag to value
             auto v_tagged = v;
-            v_tagged.insert(v_tagged.begin(), 0x42); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x23); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x22); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x11); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0xDA); // tag
+            v_tagged.insert(v_tagged.begin(), 0x42);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x23);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x22);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x11);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0xDA);  // tag
 
             // check that parsing fails in error mode
             CHECK_THROWS_AS(json::from_cbor(v_tagged), json::parse_error);
@@ -2649,10 +2802,10 @@ TEST_CASE("Tagged values")
         {
             // add tag to value
             auto v_tagged = v;
-            v_tagged.insert(v_tagged.begin(), 0x23); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x22); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x11); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0xDA); // tag
+            v_tagged.insert(v_tagged.begin(), 0x23);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x22);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x11);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0xDA);  // tag
 
             // check that parsing fails in all modes
             CHECK_THROWS_AS(json::from_cbor(v_tagged), json::parse_error);
@@ -2667,15 +2820,15 @@ TEST_CASE("Tagged values")
         {
             // add tag to value
             auto v_tagged = v;
-            v_tagged.insert(v_tagged.begin(), 0x42); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x23); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x22); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x11); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x42); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x23); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x22); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x11); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0xDB); // tag
+            v_tagged.insert(v_tagged.begin(), 0x42);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x23);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x22);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x11);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x42);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x23);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x22);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x11);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0xDB);  // tag
 
             // check that parsing fails in error mode
             CHECK_THROWS_AS(json::from_cbor(v_tagged), json::parse_error);
@@ -2690,14 +2843,14 @@ TEST_CASE("Tagged values")
         {
             // add tag to value
             auto v_tagged = v;
-            v_tagged.insert(v_tagged.begin(), 0x42); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x23); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x22); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x11); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x23); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x22); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0x11); // 1 byte
-            v_tagged.insert(v_tagged.begin(), 0xDB); // tag
+            v_tagged.insert(v_tagged.begin(), 0x42);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x23);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x22);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x11);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x23);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x22);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0x11);  // 1 byte
+            v_tagged.insert(v_tagged.begin(), 0xDB);  // tag
 
             // check that parsing fails in all modes
             CHECK_THROWS_AS(json::from_cbor(v_tagged), json::parse_error);
@@ -2714,7 +2867,7 @@ TEST_CASE("Tagged values")
 
         // convert to CBOR
         const auto vec = json::to_cbor(j_binary);
-        CHECK(vec == std::vector<std::uint8_t> {0xA1, 0x66, 0x62, 0x69, 0x6E, 0x61, 0x72, 0x79, 0xD8, 0x2A, 0x44, 0xCA, 0xFE, 0xBA, 0xBE});
+        CHECK(vec == std::vector<std::uint8_t>{0xA1, 0x66, 0x62, 0x69, 0x6E, 0x61, 0x72, 0x79, 0xD8, 0x2A, 0x44, 0xCA, 0xFE, 0xBA, 0xBE});
 
         // parse error when parsing tagged value
         CHECK_THROWS_AS(json::from_cbor(vec), json::parse_error);

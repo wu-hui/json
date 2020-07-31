@@ -37,18 +37,12 @@ TEST_CASE("reference access")
 {
     // create a JSON value with different types
     json json_types =
-    {
-        {"boolean", true},
         {
-            "number", {
-                {"integer", 42},
-                {"floating-point", 17.23}
-            }
-        },
-        {"string", "Hello, world!"},
-        {"array", {1, 2, 3, 4, 5}},
-        {"null", nullptr}
-    };
+            {"boolean", true},
+            {"number", {{"integer", 42}, {"floating-point", 17.23}}},
+            {"string", "Hello, world!"},
+            {"array", {1, 2, 3, 4, 5}},
+            {"null", nullptr}};
 
     SECTION("reference access to object_t")
     {

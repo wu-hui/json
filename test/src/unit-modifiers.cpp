@@ -780,15 +780,13 @@ TEST_CASE("modifiers")
             CHECK_THROWS_AS(j_nonarray.insert(j_nonarray.end(), 10), json::type_error&);
             CHECK_THROWS_AS(j_nonarray.insert(j_nonarray.end(), j_value), json::type_error&);
             CHECK_THROWS_AS(j_nonarray.insert(j_nonarray.end(), 10, 11), json::type_error&);
-            CHECK_THROWS_AS(j_nonarray.insert(j_nonarray.end(), j_yet_another_array.begin(),
-                                              j_yet_another_array.end()), json::type_error&);
+            CHECK_THROWS_AS(j_nonarray.insert(j_nonarray.end(), j_yet_another_array.begin(), j_yet_another_array.end()), json::type_error&);
             CHECK_THROWS_AS(j_nonarray.insert(j_nonarray.end(), {1, 2, 3, 4}), json::type_error&);
 
             CHECK_THROWS_WITH(j_nonarray.insert(j_nonarray.end(), 10), "[json.exception.type_error.309] cannot use insert() with number");
             CHECK_THROWS_WITH(j_nonarray.insert(j_nonarray.end(), j_value), "[json.exception.type_error.309] cannot use insert() with number");
             CHECK_THROWS_WITH(j_nonarray.insert(j_nonarray.end(), 10, 11), "[json.exception.type_error.309] cannot use insert() with number");
-            CHECK_THROWS_WITH(j_nonarray.insert(j_nonarray.end(), j_yet_another_array.begin(),
-                                                j_yet_another_array.end()), "[json.exception.type_error.309] cannot use insert() with number");
+            CHECK_THROWS_WITH(j_nonarray.insert(j_nonarray.end(), j_yet_another_array.begin(), j_yet_another_array.end()), "[json.exception.type_error.309] cannot use insert() with number");
             CHECK_THROWS_WITH(j_nonarray.insert(j_nonarray.end(), {1, 2, 3, 4}),
                               "[json.exception.type_error.309] cannot use insert() with number");
         }

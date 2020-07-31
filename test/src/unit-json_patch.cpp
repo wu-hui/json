@@ -1193,76 +1193,64 @@ TEST_CASE("JSON patch")
         SECTION("add")
         {
             CHECK(R"( {} )"_json.patch(
-                      R"( [{"op": "add", "path": "/foo", "value": "bar"}] )"_json
-                  ) == R"( {"foo": "bar"} )"_json);
+                      R"( [{"op": "add", "path": "/foo", "value": "bar"}] )"_json) == R"( {"foo": "bar"} )"_json);
 
             CHECK(R"( {"foo": [1, 3]} )"_json.patch(
-                      R"( [{"op": "add", "path": "/foo", "value": "bar"}] )"_json
-                  ) == R"( {"foo": "bar"} )"_json);
+                      R"( [{"op": "add", "path": "/foo", "value": "bar"}] )"_json) == R"( {"foo": "bar"} )"_json);
 
             CHECK(R"( {"foo": [{}]} )"_json.patch(
-                      R"( [{"op": "add", "path": "/foo/0/bar", "value": "baz"}] )"_json
-                  ) == R"( {"foo": [{"bar": "baz"}]} )"_json);
+                      R"( [{"op": "add", "path": "/foo/0/bar", "value": "baz"}] )"_json) == R"( {"foo": [{"bar": "baz"}]} )"_json);
         }
 
         SECTION("remove")
         {
             CHECK(R"( {"foo": "bar"} )"_json.patch(
-                      R"( [{"op": "remove", "path": "/foo"}] )"_json
-                  ) == R"( {} )"_json);
+                      R"( [{"op": "remove", "path": "/foo"}] )"_json) == R"( {} )"_json);
 
             CHECK(R"( {"foo": [1, 2, 3]} )"_json.patch(
-                      R"( [{"op": "remove", "path": "/foo/1"}] )"_json
-                  ) == R"( {"foo": [1, 3]} )"_json);
+                      R"( [{"op": "remove", "path": "/foo/1"}] )"_json) == R"( {"foo": [1, 3]} )"_json);
 
             CHECK(R"( {"foo": [{"bar": "baz"}]} )"_json.patch(
-                      R"( [{"op": "remove", "path": "/foo/0/bar"}] )"_json
-                  ) == R"( {"foo": [{}]} )"_json);
+                      R"( [{"op": "remove", "path": "/foo/0/bar"}] )"_json) == R"( {"foo": [{}]} )"_json);
         }
 
         SECTION("replace")
         {
             CHECK(R"( {"foo": "bar"} )"_json.patch(
-                      R"( [{"op": "replace", "path": "/foo", "value": 1}] )"_json
-                  ) == R"( {"foo": 1} )"_json);
+                      R"( [{"op": "replace", "path": "/foo", "value": 1}] )"_json) == R"( {"foo": 1} )"_json);
 
             CHECK(R"( {"foo": [1, 2, 3]} )"_json.patch(
-                      R"( [{"op": "replace", "path": "/foo/1", "value": 4}] )"_json
-                  ) == R"( {"foo": [1, 4, 3]} )"_json);
+                      R"( [{"op": "replace", "path": "/foo/1", "value": 4}] )"_json) == R"( {"foo": [1, 4, 3]} )"_json);
 
             CHECK(R"( {"foo": [{"bar": "baz"}]} )"_json.patch(
-                      R"( [{"op": "replace", "path": "/foo/0/bar", "value": 1}] )"_json
-                  ) == R"( {"foo": [{"bar": 1}]} )"_json);
+                      R"( [{"op": "replace", "path": "/foo/0/bar", "value": 1}] )"_json) == R"( {"foo": [{"bar": 1}]} )"_json);
         }
 
         SECTION("move")
         {
             CHECK(R"( {"foo": [1, 2, 3]} )"_json.patch(
-                      R"( [{"op": "move", "from": "/foo", "path": "/bar"}] )"_json
-                  ) == R"( {"bar": [1, 2, 3]} )"_json);
+                      R"( [{"op": "move", "from": "/foo", "path": "/bar"}] )"_json) == R"( {"bar": [1, 2, 3]} )"_json);
         }
 
         SECTION("copy")
         {
             CHECK(R"( {"foo": [1, 2, 3]} )"_json.patch(
-                      R"( [{"op": "copy", "from": "/foo/1", "path": "/bar"}] )"_json
-                  ) == R"( {"foo": [1, 2, 3], "bar": 2} )"_json);
+                      R"( [{"op": "copy", "from": "/foo/1", "path": "/bar"}] )"_json) == R"( {"foo": [1, 2, 3], "bar": 2} )"_json);
         }
 
         SECTION("copy")
         {
             CHECK_NOTHROW(R"( {"foo": "bar"} )"_json.patch(
-                              R"( [{"op": "test", "path": "/foo", "value": "bar"}] )"_json));
+                R"( [{"op": "test", "path": "/foo", "value": "bar"}] )"_json));
         }
     }
 
     SECTION("Tests from github.com/json-patch/json-patch-tests")
     {
         for (auto filename :
-                {
-                    TEST_DATA_DIRECTORY "/json-patch-tests/spec_tests.json",
-                    TEST_DATA_DIRECTORY "/json-patch-tests/tests.json"
-                })
+             {
+                 TEST_DATA_DIRECTORY "/json-patch-tests/spec_tests.json",
+                 TEST_DATA_DIRECTORY "/json-patch-tests/tests.json"})
         {
             CAPTURE(filename)
             std::ifstream f(filename);

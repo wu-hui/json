@@ -33,7 +33,6 @@ SOFTWARE.
 using nlohmann::json;
 using nlohmann::ordered_json;
 
-
 TEST_CASE("ordered_json")
 {
     json j;
@@ -67,11 +66,11 @@ TEST_CASE("ordered_json")
     CHECK(oj.dump() == "{\"element3\":3,\"element2\":2}");
 
     // There are no dup keys cause constructor calls emplace...
-    json multi {{"z", 1}, {"m", 2}, {"m", 3}, {"y", 4}, {"m", 5}};
+    json multi{{"z", 1}, {"m", 2}, {"m", 3}, {"y", 4}, {"m", 5}};
     CHECK(multi.size() == 3);
     CHECK(multi.dump() == "{\"m\":2,\"y\":4,\"z\":1}");
 
-    ordered_json multi_ordered {{"z", 1}, {"m", 2}, {"m", 3}, {"y", 4}, {"m", 5}};
+    ordered_json multi_ordered{{"z", 1}, {"m", 2}, {"m", 3}, {"y", 4}, {"m", 5}};
     CHECK(multi_ordered.size() == 3);
     CHECK(multi_ordered.dump() == "{\"z\":1,\"m\":2,\"y\":4}");
     CHECK(multi_ordered.erase("m") == 1);

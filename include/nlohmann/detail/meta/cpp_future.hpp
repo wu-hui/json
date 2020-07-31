@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstddef> // size_t
-#include <type_traits> // conditional, enable_if, false_type, integral_constant, is_constructible, is_integral, is_same, remove_cv, remove_reference, true_type
+#include <cstddef>      // size_t
+#include <type_traits>  // conditional, enable_if, false_type, integral_constant, is_constructible, is_integral, is_same, remove_cv, remove_reference, true_type
 
 namespace nlohmann
 {
@@ -32,22 +32,32 @@ struct merge_and_renumber;
 
 template<std::size_t... I1, std::size_t... I2>
 struct merge_and_renumber<index_sequence<I1...>, index_sequence<I2...>>
-        : index_sequence < I1..., (sizeof...(I1) + I2)... > {};
+  : index_sequence<I1..., (sizeof...(I1) + I2)...>
+{};
 
 template<std::size_t N>
 struct make_index_sequence
-    : merge_and_renumber < typename make_index_sequence < N / 2 >::type,
-      typename make_index_sequence < N - N / 2 >::type > {};
+  : merge_and_renumber<typename make_index_sequence<N / 2>::type,
+                       typename make_index_sequence<N - N / 2>::type>
+{};
 
-template<> struct make_index_sequence<0> : index_sequence<> {};
-template<> struct make_index_sequence<1> : index_sequence<0> {};
+template<>
+struct make_index_sequence<0> : index_sequence<>
+{};
+template<>
+struct make_index_sequence<1> : index_sequence<0>
+{};
 
 template<typename... Ts>
 using index_sequence_for = make_index_sequence<sizeof...(Ts)>;
 
 // dispatch utility (taken from ranges-v3)
-template<unsigned N> struct priority_tag : priority_tag < N - 1 > {};
-template<> struct priority_tag<0> {};
+template<unsigned N>
+struct priority_tag : priority_tag<N - 1>
+{};
+template<>
+struct priority_tag<0>
+{};
 
 // taken from ranges-v3
 template<typename T>

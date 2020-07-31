@@ -41,12 +41,12 @@ template<class T>
 struct bad_allocator : std::allocator<T>
 {
     template<class... Args>
-    void construct(T*, Args&& ...)
+    void construct(T*, Args&&...)
     {
         throw std::bad_alloc();
     }
 };
-}
+}  // namespace
 
 TEST_CASE("bad_alloc")
 {
@@ -54,13 +54,13 @@ TEST_CASE("bad_alloc")
     {
         // create JSON type using the throwing allocator
         using bad_json = nlohmann::basic_json<std::map,
-              std::vector,
-              std::string,
-              bool,
-              std::int64_t,
-              std::uint64_t,
-              double,
-              bad_allocator>;
+                                              std::vector,
+                                              std::string,
+                                              bool,
+                                              std::int64_t,
+                                              std::uint64_t,
+                                              double,
+                                              bad_allocator>;
 
         // creating an object should throw
         CHECK_THROWS_AS(bad_json(bad_json::value_t::object), std::bad_alloc&);
@@ -79,7 +79,7 @@ struct my_allocator : std::allocator<T>
     using std::allocator<T>::allocator;
 
     template<class... Args>
-    void construct(T* p, Args&& ... args)
+    void construct(T* p, Args&&... args)
     {
         if (next_construct_fails)
         {
@@ -118,7 +118,7 @@ struct my_allocator : std::allocator<T>
         }
     }
 
-    template <class U>
+    template<class U>
     struct rebind
     {
         using other = my_allocator<U>;
@@ -134,19 +134,19 @@ void my_allocator_clean_up(T* p)
     alloc.destroy(p);
     alloc.deallocate(p, 1);
 }
-}
+}  // namespace
 
 TEST_CASE("controlled bad_alloc")
 {
     // create JSON type using the throwing allocator
     using my_json = nlohmann::basic_json<std::map,
-          std::vector,
-          std::string,
-          bool,
-          std::int64_t,
-          std::uint64_t,
-          double,
-          my_allocator>;
+                                         std::vector,
+                                         std::string,
+                                         bool,
+                                         std::int64_t,
+                                         std::uint64_t,
+                                         double,
+                                         my_allocator>;
 
     SECTION("class json_value")
     {
@@ -197,7 +197,7 @@ TEST_CASE("controlled bad_alloc")
         SECTION("basic_json(const CompatibleObjectType&)")
         {
             next_construct_fails = false;
-            std::map<std::string, std::string> v {{"foo", "bar"}};
+            std::map<std::string, std::string> v{{"foo", "bar"}};
             CHECK_NOTHROW(my_json(v));
             next_construct_fails = true;
             CHECK_THROWS_AS(my_json(v), std::bad_alloc&);
@@ -207,7 +207,7 @@ TEST_CASE("controlled bad_alloc")
         SECTION("basic_json(const CompatibleArrayType&)")
         {
             next_construct_fails = false;
-            std::vector<std::string> v {"foo", "bar", "baz"};
+            std::vector<std::string> v{"foo", "bar", "baz"};
             CHECK_NOTHROW(my_json(v));
             next_construct_fails = true;
             CHECK_THROWS_AS(my_json(v), std::bad_alloc&);
@@ -241,36 +241,37 @@ template<class T>
 struct allocator_no_forward : std::allocator<T>
 {
     allocator_no_forward() {}
-    template <class U>
-    allocator_no_forward(allocator_no_forward<U>) {}
+    template<class U>
+    allocator_no_forward(allocator_no_forward<U>)
+    {}
 
-    template <class U>
+    template<class U>
     struct rebind
     {
-        using other =  allocator_no_forward<U>;
+        using other = allocator_no_forward<U>;
     };
 
-    template <class... Args>
-    void construct(T* p, const Args& ... args) noexcept(noexcept(::new (static_cast<void*>(p)) T(args...)))
+    template<class... Args>
+    void construct(T* p, const Args&... args) noexcept(noexcept(::new (static_cast<void*>(p)) T(args...)))
     {
         // force copy even if move is available
         ::new (static_cast<void*>(p)) T(args...);
     }
 };
-}
+}  // namespace
 
 TEST_CASE("bad my_allocator::construct")
 {
     SECTION("my_allocator::construct doesn't forward")
     {
         using bad_alloc_json = nlohmann::basic_json<std::map,
-              std::vector,
-              std::string,
-              bool,
-              std::int64_t,
-              std::uint64_t,
-              double,
-              allocator_no_forward>;
+                                                    std::vector,
+                                                    std::string,
+                                                    bool,
+                                                    std::int64_t,
+                                                    std::uint64_t,
+                                                    double,
+                                                    allocator_no_forward>;
 
         bad_alloc_json j;
         j["test"] = bad_alloc_json::array_t();

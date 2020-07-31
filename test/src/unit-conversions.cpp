@@ -42,7 +42,7 @@ using nlohmann::json;
 #include <unordered_set>
 #include <valarray>
 
-#if (defined(__cplusplus) && __cplusplus >= 201703L) || (defined(_HAS_CXX17) && _HAS_CXX17 == 1) // fix for issue #464
+#if (defined(__cplusplus) && __cplusplus >= 201703L) || (defined(_HAS_CXX17) && _HAS_CXX17 == 1)  // fix for issue #464
     #define JSON_HAS_CPP_17
     #define JSON_HAS_CPP_14
 #elif (defined(__cplusplus) && __cplusplus >= 201402L) || (defined(_HAS_CXX14) && _HAS_CXX14 == 1)
@@ -58,12 +58,11 @@ TEST_CASE("value conversion")
     SECTION("get an object (explicit)")
     {
         json::object_t o_reference = {{"object", json::object()},
-            {"array", {1, 2, 3, 4}},
-            {"number", 42},
-            {"boolean", false},
-            {"null", nullptr},
-            {"string", "Hello world"}
-        };
+                                      {"array", {1, 2, 3, 4}},
+                                      {"number", 42},
+                                      {"boolean", false},
+                                      {"null", nullptr},
+                                      {"string", "Hello world"}};
         json j(o_reference);
 
         SECTION("json::object_t")
@@ -145,12 +144,11 @@ TEST_CASE("value conversion")
     SECTION("get an object (explicit, get_to)")
     {
         json::object_t o_reference = {{"object", json::object()},
-            {"array", {1, 2, 3, 4}},
-            {"number", 42},
-            {"boolean", false},
-            {"null", nullptr},
-            {"string", "Hello world"}
-        };
+                                      {"array", {1, 2, 3, 4}},
+                                      {"number", 42},
+                                      {"boolean", false},
+                                      {"null", nullptr},
+                                      {"string", "Hello world"}};
         json j(o_reference);
 
         SECTION("json::object_t")
@@ -193,12 +191,11 @@ TEST_CASE("value conversion")
     SECTION("get an object (implicit)")
     {
         json::object_t o_reference = {{"object", json::object()},
-            {"array", {1, 2, 3, 4}},
-            {"number", 42},
-            {"boolean", false},
-            {"null", nullptr},
-            {"string", "Hello world"}
-        };
+                                      {"array", {1, 2, 3, 4}},
+                                      {"number", 42},
+                                      {"boolean", false},
+                                      {"null", nullptr},
+                                      {"string", "Hello world"}};
         json j(o_reference);
 
         SECTION("json::object_t")
@@ -235,8 +232,7 @@ TEST_CASE("value conversion")
 
     SECTION("get an array (explicit)")
     {
-        json::array_t a_reference{json(1),     json(1u),       json(2.2),
-                                  json(false), json("string"), json()};
+        json::array_t a_reference{json(1), json(1u), json(2.2), json(false), json("string"), json()};
         json j(a_reference);
 
         SECTION("json::array_t")
@@ -351,8 +347,7 @@ TEST_CASE("value conversion")
 
     SECTION("get an array (explicit, get_to)")
     {
-        json::array_t a_reference{json(1),     json(1u),       json(2.2),
-                                  json(false), json("string"), json()};
+        json::array_t a_reference{json(1), json(1u), json(2.2), json(false), json("string"), json()};
         json j(a_reference);
 
         SECTION("json::array_t")
@@ -411,8 +406,7 @@ TEST_CASE("value conversion")
 #if JSON_USE_IMPLICIT_CONVERSIONS
     SECTION("get an array (implicit)")
     {
-        json::array_t a_reference{json(1),     json(1u),       json(2.2),
-                                  json(false), json("string"), json()};
+        json::array_t a_reference{json(1), json(1u), json(2.2), json(false), json("string"), json()};
         json j(a_reference);
 
         SECTION("json::array_t")
@@ -600,7 +594,6 @@ TEST_CASE("value conversion")
                           "[json.exception.type_error.302] type must be null, but is number");
         CHECK_THROWS_WITH(json(json::value_t::number_float).get<std::nullptr_t>(),
                           "[json.exception.type_error.302] type must be null, but is number");
-
     }
 
 #if JSON_USE_IMPLICIT_CONVERSIONS
@@ -615,13 +608,13 @@ TEST_CASE("value conversion")
             CHECK(json(s) == j);
         }
 
-#if defined(JSON_HAS_CPP_17)
+    #if defined(JSON_HAS_CPP_17)
         SECTION("std::string_view")
         {
             std::string_view s = j.get<std::string_view>();
             CHECK(json(s) == j);
         }
-#endif
+    #endif
 
         SECTION("std::string")
         {
@@ -1393,8 +1386,16 @@ TEST_CASE("value conversion")
 
     SECTION("get an enum")
     {
-        enum c_enum { value_1, value_2 };
-        enum class cpp_enum { value_1, value_2 };
+        enum c_enum
+        {
+            value_1,
+            value_2
+        };
+        enum class cpp_enum
+        {
+            value_1,
+            value_2
+        };
 
         CHECK(json(value_1).get<c_enum>() == value_1);
         CHECK(json(cpp_enum::value_1).get<cpp_enum>() == cpp_enum::value_1);
@@ -1498,7 +1499,7 @@ TEST_CASE("value conversion")
                     std::array<int, 6> arr6 = {{1, 2, 3, 4, 5, 6}};
                     CHECK_THROWS_AS(j1.get_to(arr6), json::out_of_range&);
                     CHECK_THROWS_WITH(j1.get_to(arr6), "[json.exception.out_of_range.401] "
-                                      "array index 4 is out of range");
+                                                       "array index 4 is out of range");
                 }
 
                 SECTION("std::array is smaller than JSON")
@@ -1642,16 +1643,20 @@ TEST_CASE("value conversion")
     }
 }
 
-enum class cards {kreuz, pik, herz, karo};
+enum class cards
+{
+    kreuz,
+    pik,
+    herz,
+    karo
+};
 
 NLOHMANN_JSON_SERIALIZE_ENUM(cards,
-{
-    {cards::kreuz, "kreuz"},
-    {cards::pik, "pik"},
-    {cards::pik, "puk"},  // second entry for cards::puk; will not be used
-    {cards::herz, "herz"},
-    {cards::karo, "karo"}
-})
+                             {{cards::kreuz, "kreuz"},
+                              {cards::pik, "pik"},
+                              {cards::pik, "puk"},  // second entry for cards::puk; will not be used
+                              {cards::herz, "herz"},
+                              {cards::karo, "karo"}})
 
 enum TaskState
 {
@@ -1662,12 +1667,12 @@ enum TaskState
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(TaskState,
-{
-    {TS_INVALID, nullptr},
-    {TS_STOPPED, "stopped"},
-    {TS_RUNNING, "running"},
-    {TS_COMPLETED, "completed"},
-})
+                             {
+                                 {TS_INVALID, nullptr},
+                                 {TS_STOPPED, "stopped"},
+                                 {TS_RUNNING, "running"},
+                                 {TS_COMPLETED, "completed"},
+                             })
 
 TEST_CASE("JSON to enum mapping")
 {

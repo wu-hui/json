@@ -38,14 +38,14 @@ TEST_CASE("other constructors and destructor")
     {
         SECTION("object")
         {
-            json j {{"foo", 1}, {"bar", false}};
+            json j{{"foo", 1}, {"bar", false}};
             json k(j);
             CHECK(j == k);
         }
 
         SECTION("array")
         {
-            json j {"foo", 1, 42.23, false};
+            json j{"foo", 1, 42.23, false};
             json k(j);
             CHECK(j == k);
         }
@@ -102,7 +102,7 @@ TEST_CASE("other constructors and destructor")
 
     SECTION("move constructor")
     {
-        json j {{"foo", "bar"}, {"baz", {1, 2, 3, 4}}, {"a", 42u}, {"b", 42.23}, {"c", nullptr}};
+        json j{{"foo", "bar"}, {"baz", {1, 2, 3, 4}}, {"a", 42u}, {"b", 42.23}, {"c", nullptr}};
         CHECK(j.type() == json::value_t::object);
         json k(std::move(j));
         CHECK(k.type() == json::value_t::object);
@@ -113,7 +113,7 @@ TEST_CASE("other constructors and destructor")
     {
         SECTION("object")
         {
-            json j {{"foo", 1}, {"bar", false}};
+            json j{{"foo", 1}, {"bar", false}};
             json k;
             k = j;
             CHECK(j == k);
@@ -121,7 +121,7 @@ TEST_CASE("other constructors and destructor")
 
         SECTION("array")
         {
-            json j {"foo", 1, 42.23, false};
+            json j{"foo", 1, 42.23, false};
             json k;
             k = j;
             CHECK(j == k);
@@ -188,13 +188,13 @@ TEST_CASE("other constructors and destructor")
     {
         SECTION("object")
         {
-            auto j = new json {{"foo", 1}, {"bar", false}};
+            auto j = new json{{"foo", 1}, {"bar", false}};
             delete j;
         }
 
         SECTION("array")
         {
-            auto j = new json {"foo", 1, 1u, false, 23.42};
+            auto j = new json{"foo", 1, 1u, false, 23.42};
             delete j;
         }
 

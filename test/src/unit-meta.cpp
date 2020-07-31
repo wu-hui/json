@@ -42,12 +42,10 @@ TEST_CASE("version information")
         CHECK(j["copyright"] == "(C) 2013-2020 Niels Lohmann");
         CHECK(j["url"] == "https://github.com/nlohmann/json");
         CHECK(j["version"] == json(
-        {
-            {"string", "3.9.0"},
-            {"major", 3},
-            {"minor", 9},
-            {"patch", 0}
-        }));
+                                  {{"string", "3.9.0"},
+                                   {"major", 3},
+                                   {"minor", 9},
+                                   {"patch", 0}}));
 
         CHECK(j.find("platform") != j.end());
         CHECK(j.at("compiler").find("family") != j.at("compiler").end());

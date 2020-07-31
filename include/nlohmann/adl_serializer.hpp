@@ -7,7 +7,6 @@
 
 namespace nlohmann
 {
-
 template<typename, typename>
 struct adl_serializer
 {
@@ -23,7 +22,7 @@ struct adl_serializer
     template<typename BasicJsonType, typename ValueType>
     static auto from_json(BasicJsonType&& j, ValueType& val) noexcept(
         noexcept(::nlohmann::from_json(std::forward<BasicJsonType>(j), val)))
-    -> decltype(::nlohmann::from_json(std::forward<BasicJsonType>(j), val), void())
+        -> decltype(::nlohmann::from_json(std::forward<BasicJsonType>(j), val), void())
     {
         ::nlohmann::from_json(std::forward<BasicJsonType>(j), val);
     }
@@ -40,7 +39,7 @@ struct adl_serializer
     template<typename BasicJsonType, typename ValueType>
     static auto to_json(BasicJsonType& j, ValueType&& val) noexcept(
         noexcept(::nlohmann::to_json(j, std::forward<ValueType>(val))))
-    -> decltype(::nlohmann::to_json(j, std::forward<ValueType>(val)), void())
+        -> decltype(::nlohmann::to_json(j, std::forward<ValueType>(val)), void())
     {
         ::nlohmann::to_json(j, std::forward<ValueType>(val));
     }

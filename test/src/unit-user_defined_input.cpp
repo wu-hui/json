@@ -65,14 +65,12 @@ const char* end(const MyContainer& c)
 
 TEST_CASE("Custom container")
 {
-
     MyContainer data{"[1,2,3,4]"};
     json as_json = json::parse(data);
     CHECK(as_json.at(0) == 1);
     CHECK(as_json.at(1) == 2);
     CHECK(as_json.at(2) == 3);
     CHECK(as_json.at(3) == 4);
-
 }
 
 TEST_CASE("Custom iterator")
@@ -116,4 +114,4 @@ TEST_CASE("Custom iterator")
     CHECK(as_json.at(3) == 4);
 }
 
-} // namespace
+}  // namespace

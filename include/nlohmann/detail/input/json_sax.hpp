@@ -1,16 +1,15 @@
 #pragma once
 
 #include <cstddef>
-#include <string> // string
-#include <utility> // move
-#include <vector> // vector
+#include <string>   // string
+#include <utility>  // move
+#include <vector>   // vector
 
 #include <nlohmann/detail/exceptions.hpp>
 #include <nlohmann/detail/macro_scope.hpp>
 
 namespace nlohmann
 {
-
 /*!
 @brief SAX interface
 
@@ -129,7 +128,6 @@ struct json_sax
     virtual ~json_sax() = default;
 };
 
-
 namespace detail
 {
 /*!
@@ -161,7 +159,8 @@ class json_sax_dom_parser
     @param[in] allow_exceptions_  whether parse errors yield exceptions
     */
     explicit json_sax_dom_parser(BasicJsonType& r, const bool allow_exceptions_ = true)
-        : root(r), allow_exceptions(allow_exceptions_)
+      : root(r)
+      , allow_exceptions(allow_exceptions_)
     {}
 
     // make class move-only
@@ -259,8 +258,7 @@ class json_sax_dom_parser
     }
 
     template<class Exception>
-    bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/,
-                     const Exception& ex)
+    bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/, const Exception& ex)
     {
         errored = true;
         static_cast<void>(ex);
@@ -285,7 +283,8 @@ class json_sax_dom_parser
     */
     template<typename Value>
     JSON_HEDLEY_RETURNS_NON_NULL
-    BasicJsonType* handle_value(Value&& v)
+        BasicJsonType*
+        handle_value(Value&& v)
     {
         if (ref_stack.empty())
         {
@@ -310,7 +309,7 @@ class json_sax_dom_parser
     /// the parsed JSON value
     BasicJsonType& root;
     /// stack to model hierarchy of values
-    std::vector<BasicJsonType*> ref_stack {};
+    std::vector<BasicJsonType*> ref_stack{};
     /// helper to hold the reference for the next object element
     BasicJsonType* object_element = nullptr;
     /// whether a syntax error occurred
@@ -334,7 +333,9 @@ class json_sax_dom_callback_parser
     json_sax_dom_callback_parser(BasicJsonType& r,
                                  const parser_callback_t cb,
                                  const bool allow_exceptions_ = true)
-        : root(r), callback(cb), allow_exceptions(allow_exceptions_)
+      : root(r)
+      , callback(cb)
+      , allow_exceptions(allow_exceptions_)
     {
         keep_stack.push_back(true);
     }
@@ -498,8 +499,7 @@ class json_sax_dom_callback_parser
     }
 
     template<class Exception>
-    bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/,
-                     const Exception& ex)
+    bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/, const Exception& ex)
     {
         errored = true;
         static_cast<void>(ex);
@@ -598,11 +598,11 @@ class json_sax_dom_callback_parser
     /// the parsed JSON value
     BasicJsonType& root;
     /// stack to model hierarchy of values
-    std::vector<BasicJsonType*> ref_stack {};
+    std::vector<BasicJsonType*> ref_stack{};
     /// stack to manage which values to keep
-    std::vector<bool> keep_stack {};
+    std::vector<bool> keep_stack{};
     /// stack to manage which object keys to keep
-    std::vector<bool> key_keep_stack {};
+    std::vector<bool> key_keep_stack{};
     /// helper to hold the reference for the next object element
     BasicJsonType* object_element = nullptr;
     /// whether a syntax error occurred

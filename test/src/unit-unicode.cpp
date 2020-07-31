@@ -38,9 +38,9 @@ using nlohmann::json;
 #undef private
 
 #include <fstream>
-#include <sstream>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
 #include <test_data.hpp>
 
 namespace
@@ -169,7 +169,7 @@ void check_utf8string(bool success_expected, int byte1, int byte2 = -1, int byte
         CHECK_THROWS_AS(_ = json::parse(json_string), json::parse_error&);
     }
 }
-}
+}  // namespace
 
 TEST_CASE("Unicode" * doctest::skip())
 {
@@ -1001,8 +1001,7 @@ TEST_CASE("Unicode" * doctest::skip())
     SECTION("\\uxxxx sequences")
     {
         // create an escaped string from a code point
-        const auto codepoint_to_unicode = [](std::size_t cp)
-        {
+        const auto codepoint_to_unicode = [](std::size_t cp) {
             // code points are represented as a six-character sequence: a
             // reverse solidus, followed by the lowercase letter u, followed
             // by four hexadecimal digits that encode the character's code
@@ -1256,7 +1255,7 @@ void roundtrip(bool success_expected, const std::string& s)
         CHECK_THROWS_AS(_ = json::parse(ps), json::parse_error&);
     }
 }
-}
+}  // namespace
 
 TEST_CASE("Markus Kuhn's UTF-8 decoder capability and stress test")
 {

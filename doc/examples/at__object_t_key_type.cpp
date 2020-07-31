@@ -7,11 +7,10 @@ int main()
 {
     // create JSON object
     json object =
-    {
-        {"the good", "il buono"},
-        {"the bad", "il cattivo"},
-        {"the ugly", "il brutto"}
-    };
+        {
+            {"the good", "il buono"},
+            {"the bad", "il cattivo"},
+            {"the ugly", "il brutto"}};
 
     // output element with key "the ugly"
     std::cout << object.at("the ugly") << '\n';
@@ -21,7 +20,6 @@ int main()
 
     // output changed array
     std::cout << object << '\n';
-
 
     // exception type_error.304
     try

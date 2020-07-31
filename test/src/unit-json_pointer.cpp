@@ -386,7 +386,7 @@ TEST_CASE("JSON pointers")
 
             CHECK_THROWS_AS(json({{"/list/0", 1}, {"/list/1", 2}, {"/list/three", 3}}).unflatten(), json::parse_error&);
             CHECK_THROWS_WITH(json({{"/list/0", 1}, {"/list/1", 2}, {"/list/three", 3}}).unflatten(),
-            "[json.exception.parse_error.109] parse error: array index 'three' is not a number");
+                              "[json.exception.parse_error.109] parse error: array index 'three' is not a number");
 
             // assign to "-"
             j["/-"_json_pointer] = 99;
@@ -443,46 +443,31 @@ TEST_CASE("JSON pointers")
     SECTION("flatten")
     {
         json j =
-        {
-            {"pi", 3.141},
-            {"happy", true},
-            {"name", "Niels"},
-            {"nothing", nullptr},
             {
-                "answer", {
-                    {"everything", 42}
-                }
-            },
-            {"list", {1, 0, 2}},
-            {
-                "object", {
-                    {"currency", "USD"},
-                    {"value", 42.99},
-                    {"", "empty string"},
-                    {"/", "slash"},
-                    {"~", "tilde"},
-                    {"~1", "tilde1"}
-                }
-            }
-        };
+                {"pi", 3.141},
+                {"happy", true},
+                {"name", "Niels"},
+                {"nothing", nullptr},
+                {"answer", {{"everything", 42}}},
+                {"list", {1, 0, 2}},
+                {"object", {{"currency", "USD"}, {"value", 42.99}, {"", "empty string"}, {"/", "slash"}, {"~", "tilde"}, {"~1", "tilde1"}}}};
 
         json j_flatten =
-        {
-            {"/pi", 3.141},
-            {"/happy", true},
-            {"/name", "Niels"},
-            {"/nothing", nullptr},
-            {"/answer/everything", 42},
-            {"/list/0", 1},
-            {"/list/1", 0},
-            {"/list/2", 2},
-            {"/object/currency", "USD"},
-            {"/object/value", 42.99},
-            {"/object/", "empty string"},
-            {"/object/~1", "slash"},
-            {"/object/~0", "tilde"},
-            {"/object/~01", "tilde1"}
-        };
+            {
+                {"/pi", 3.141},
+                {"/happy", true},
+                {"/name", "Niels"},
+                {"/nothing", nullptr},
+                {"/answer/everything", 42},
+                {"/list/0", 1},
+                {"/list/1", 0},
+                {"/list/2", 2},
+                {"/object/currency", "USD"},
+                {"/object/value", 42.99},
+                {"/object/", "empty string"},
+                {"/object/~1", "slash"},
+                {"/object/~0", "tilde"},
+                {"/object/~01", "tilde1"}};
 
         // check if flattened result is as expected
         CHECK(j.flatten() == j_flatten);
@@ -498,7 +483,7 @@ TEST_CASE("JSON pointers")
         // error for nonprimitve values
         CHECK_THROWS_AS(json({{"/1", {1, 2, 3}}}).unflatten(), json::type_error&);
         CHECK_THROWS_WITH(json({{"/1", {1, 2, 3}}}).unflatten(),
-        "[json.exception.type_error.315] values in object must be primitive");
+                          "[json.exception.type_error.315] values in object must be primitive");
 
         // error for conflicting values
         json j_error = {{"", 42}, {"/foo", 17}};
@@ -529,8 +514,7 @@ TEST_CASE("JSON pointers")
     SECTION("string representation")
     {
         for (auto ptr :
-                {"", "/foo", "/foo/0", "/", "/a~1b", "/c%d", "/e^f", "/g|h", "/i\\j", "/k\"l", "/ ", "/m~0n"
-                })
+             {"", "/foo", "/foo/0", "/", "/a~1b", "/c%d", "/e^f", "/g|h", "/i\\j", "/k\"l", "/ ", "/m~0n"})
         {
             CHECK(json::json_pointer(ptr).to_string() == ptr);
             CHECK(std::string(json::json_pointer(ptr)) == ptr);
@@ -559,29 +543,15 @@ TEST_CASE("JSON pointers")
     SECTION("empty, push, pop and parent")
     {
         const json j =
-        {
-            {"", "Hello"},
-            {"pi", 3.141},
-            {"happy", true},
-            {"name", "Niels"},
-            {"nothing", nullptr},
             {
-                "answer", {
-                    {"everything", 42}
-                }
-            },
-            {"list", {1, 0, 2}},
-            {
-                "object", {
-                    {"currency", "USD"},
-                    {"value", 42.99},
-                    {"", "empty string"},
-                    {"/", "slash"},
-                    {"~", "tilde"},
-                    {"~1", "tilde1"}
-                }
-            }
-        };
+                {"", "Hello"},
+                {"pi", 3.141},
+                {"happy", true},
+                {"name", "Niels"},
+                {"nothing", nullptr},
+                {"answer", {{"everything", 42}}},
+                {"list", {1, 0, 2}},
+                {"object", {{"currency", "USD"}, {"value", 42.99}, {"", "empty string"}, {"/", "slash"}, {"~", "tilde"}, {"~1", "tilde1"}}}};
 
         // empty json_pointer returns the root JSON-object
         auto ptr = ""_json_pointer;
@@ -635,29 +605,15 @@ TEST_CASE("JSON pointers")
     SECTION("operators")
     {
         const json j =
-        {
-            {"", "Hello"},
-            {"pi", 3.141},
-            {"happy", true},
-            {"name", "Niels"},
-            {"nothing", nullptr},
             {
-                "answer", {
-                    {"everything", 42}
-                }
-            },
-            {"list", {1, 0, 2}},
-            {
-                "object", {
-                    {"currency", "USD"},
-                    {"value", 42.99},
-                    {"", "empty string"},
-                    {"/", "slash"},
-                    {"~", "tilde"},
-                    {"~1", "tilde1"}
-                }
-            }
-        };
+                {"", "Hello"},
+                {"pi", 3.141},
+                {"happy", true},
+                {"name", "Niels"},
+                {"nothing", nullptr},
+                {"answer", {{"everything", 42}}},
+                {"list", {1, 0, 2}},
+                {"object", {{"currency", "USD"}, {"value", 42.99}, {"", "empty string"}, {"/", "slash"}, {"~", "tilde"}, {"~1", "tilde1"}}}};
 
         // empty json_pointer returns the root JSON-object
         auto ptr = ""_json_pointer;

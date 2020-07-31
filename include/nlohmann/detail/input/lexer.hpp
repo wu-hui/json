@@ -1,14 +1,14 @@
 #pragma once
 
-#include <array> // array
-#include <clocale> // localeconv
-#include <cstddef> // size_t
-#include <cstdio> // snprintf
-#include <cstdlib> // strtof, strtod, strtold, strtoll, strtoull
-#include <initializer_list> // initializer_list
-#include <string> // char_traits, string
-#include <utility> // move
-#include <vector> // vector
+#include <array>             // array
+#include <clocale>           // localeconv
+#include <cstddef>           // size_t
+#include <cstdio>            // snprintf
+#include <cstdlib>           // strtof, strtod, strtold, strtoll, strtoull
+#include <initializer_list>  // initializer_list
+#include <string>            // char_traits, string
+#include <utility>           // move
+#include <vector>            // vector
 
 #include <nlohmann/detail/input/input_adapters.hpp>
 #include <nlohmann/detail/input/position_t.hpp>
@@ -88,7 +88,7 @@ class lexer_base
             case token_type::literal_or_value:
                 return "'[', '{', or a literal";
             // LCOV_EXCL_START
-            default: // catch non-enum values
+            default:  // catch non-enum values
                 return "unknown token";
                 // LCOV_EXCL_STOP
         }
@@ -113,9 +113,9 @@ class lexer : public lexer_base<BasicJsonType>
     using token_type = typename lexer_base<BasicJsonType>::token_type;
 
     explicit lexer(InputAdapterType&& adapter, bool ignore_comments_ = false)
-        : ia(std::move(adapter))
-        , ignore_comments(ignore_comments_)
-        , decimal_point_char(static_cast<char_int_type>(get_decimal_point()))
+      : ia(std::move(adapter))
+      , ignore_comments(ignore_comments_)
+      , decimal_point_char(static_cast<char_int_type>(get_decimal_point()))
     {}
 
     // delete because of pointer members
@@ -164,7 +164,7 @@ class lexer : public lexer_base<BasicJsonType>
         JSON_ASSERT(current == 'u');
         int codepoint = 0;
 
-        const auto factors = { 12u, 8u, 4u, 0u };
+        const auto factors = {12u, 8u, 4u, 0u};
         for (const auto factor : factors)
         {
             get();
@@ -311,7 +311,7 @@ class lexer : public lexer_base<BasicJsonType>
                         case 'u':
                         {
                             const int codepoint1 = get_codepoint();
-                            int codepoint = codepoint1; // start with codepoint1
+                            int codepoint = codepoint1;  // start with codepoint1
 
                             if (JSON_HEDLEY_UNLIKELY(codepoint1 == -1))
                             {
@@ -338,14 +338,14 @@ class lexer : public lexer_base<BasicJsonType>
                                     {
                                         // overwrite codepoint
                                         codepoint = static_cast<int>(
-                                                        // high surrogate occupies the most significant 22 bits
-                                                        (static_cast<unsigned int>(codepoint1) << 10u)
-                                                        // low surrogate occupies the least significant 15 bits
-                                                        + static_cast<unsigned int>(codepoint2)
-                                                        // there is still the 0xD800, 0xDC00 and 0x10000 noise
-                                                        // in the result so we have to subtract with:
-                                                        // (0xD800 << 10) + DC00 - 0x10000 = 0x35FDC00
-                                                        - 0x35FDC00u);
+                                            // high surrogate occupies the most significant 22 bits
+                                            (static_cast<unsigned int>(codepoint1) << 10u)
+                                            // low surrogate occupies the least significant 15 bits
+                                            + static_cast<unsigned int>(codepoint2)
+                                            // there is still the 0xD800, 0xDC00 and 0x10000 noise
+                                            // in the result so we have to subtract with:
+                                            // (0xD800 << 10) + DC00 - 0x10000 = 0x35FDC00
+                                            - 0x35FDC00u);
                                     }
                                     else
                                     {
@@ -997,7 +997,7 @@ class lexer : public lexer_base<BasicJsonType>
             }
 
             // all other characters are rejected outside scan_number()
-            default:            // LCOV_EXCL_LINE
+            default:                 // LCOV_EXCL_LINE
                 JSON_ASSERT(false);  // LCOV_EXCL_LINE
         }
 
@@ -1289,8 +1289,7 @@ scan_number_done:
     @param[in] return_type   the token type to return on success
     */
     JSON_HEDLEY_NON_NULL(2)
-    token_type scan_literal(const char_type* literal_text, const std::size_t length,
-                            token_type return_type)
+    token_type scan_literal(const char_type* literal_text, const std::size_t length, token_type return_type)
     {
         JSON_ASSERT(std::char_traits<char_type>::to_char_type(current) == literal_text[0]);
         for (std::size_t i = 1; i < length; ++i)
@@ -1494,8 +1493,7 @@ scan_number_done:
         do
         {
             get();
-        }
-        while (current == ' ' || current == '\t' || current == '\n' || current == '\r');
+        } while (current == ' ' || current == '\t' || current == '\n' || current == '\r');
     }
 
     token_type scan()
@@ -1600,13 +1598,13 @@ scan_number_done:
     bool next_unget = false;
 
     /// the start position of the current token
-    position_t position {};
+    position_t position{};
 
     /// raw input token string (for error messages)
-    std::vector<char_type> token_string {};
+    std::vector<char_type> token_string{};
 
     /// buffer for variable-length tokens (numbers, strings)
-    string_t token_buffer {};
+    string_t token_buffer{};
 
     /// a description of occurred lexer errors
     const char* error_message = "";

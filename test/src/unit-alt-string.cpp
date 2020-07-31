@@ -34,7 +34,6 @@ SOFTWARE.
 #include <string>
 #include <utility>
 
-
 /* forward declarations */
 class alt_string;
 bool operator<(const char* op1, const alt_string& op2);
@@ -49,13 +48,19 @@ class alt_string
   public:
     using value_type = std::string::value_type;
 
-    alt_string(const char* str): str_impl(str) {}
-    alt_string(const char* str, std::size_t count): str_impl(str, count) {}
-    alt_string(size_t count, char chr): str_impl(count, chr) {}
+    alt_string(const char* str)
+      : str_impl(str)
+    {}
+    alt_string(const char* str, std::size_t count)
+      : str_impl(str, count)
+    {}
+    alt_string(size_t count, char chr)
+      : str_impl(count, chr)
+    {}
     alt_string() = default;
 
-    template <typename...TParams>
-    alt_string& append(TParams&& ...params)
+    template<typename... TParams>
+    alt_string& append(TParams&&... params)
     {
         str_impl.append(std::forward<TParams>(params)...);
         return *this;
@@ -66,7 +71,7 @@ class alt_string
         str_impl.push_back(c);
     }
 
-    template <typename op_type>
+    template<typename op_type>
     bool operator==(const op_type& op) const
     {
         return str_impl == op;
@@ -77,7 +82,7 @@ class alt_string
         return str_impl == op.str_impl;
     }
 
-    template <typename op_type>
+    template<typename op_type>
     bool operator!=(const op_type& op) const
     {
         return str_impl != op;
@@ -93,17 +98,17 @@ class alt_string
         return str_impl.size();
     }
 
-    void resize (std::size_t n)
+    void resize(std::size_t n)
     {
         str_impl.resize(n);
     }
 
-    void resize (std::size_t n, char c)
+    void resize(std::size_t n, char c)
     {
         str_impl.resize(n, c);
     }
 
-    template <typename op_type>
+    template<typename op_type>
     bool operator<(const op_type& op) const
     {
         return str_impl < op;
@@ -150,7 +155,7 @@ class alt_string
     }
 
   private:
-    std::string str_impl {};
+    std::string str_impl{};
 
     friend bool ::operator<(const char*, const alt_string&);
 };
@@ -160,17 +165,16 @@ void int_to_string(alt_string& target, std::size_t value)
     target = std::to_string(value).c_str();
 }
 
-using alt_json = nlohmann::basic_json <
-                 std::map,
-                 std::vector,
-                 alt_string,
-                 bool,
-                 std::int64_t,
-                 std::uint64_t,
-                 double,
-                 std::allocator,
-                 nlohmann::adl_serializer >;
-
+using alt_json = nlohmann::basic_json<
+    std::map,
+    std::vector,
+    alt_string,
+    bool,
+    std::int64_t,
+    std::uint64_t,
+    double,
+    std::allocator,
+    nlohmann::adl_serializer>;
 
 bool operator<(const char* op1, const alt_string& op2)
 {
@@ -218,14 +222,14 @@ TEST_CASE("alternative string type")
 
         {
             alt_json doc;
-            doc["list"] = { 1, 0, 2 };
+            doc["list"] = {1, 0, 2};
             alt_string dump = doc.dump();
             CHECK(dump == R"({"list":[1,0,2]})");
         }
 
         {
             alt_json doc;
-            doc["object"] = { {"currency", "USD"}, {"value", 42.99} };
+            doc["object"] = {{"currency", "USD"}, {"value", 42.99}};
             alt_string dump = doc.dump();
             CHECK(dump == R"({"object":{"currency":"USD","value":42.99}})");
         }
@@ -242,27 +246,27 @@ TEST_CASE("alternative string type")
     {
         auto doc = alt_json::parse("{\"foo\": \"bar\"}");
 
-        for ( auto item : doc.items() )
+        for (auto item : doc.items())
         {
-            CHECK( item.key() == "foo" );
-            CHECK( item.value() == "bar" );
+            CHECK(item.key() == "foo");
+            CHECK(item.value() == "bar");
         }
 
         auto doc_array = alt_json::parse("[\"foo\", \"bar\"]");
 
-        for ( auto item : doc_array.items() )
+        for (auto item : doc_array.items())
         {
-            if (item.key() == "0" )
+            if (item.key() == "0")
             {
-                CHECK( item.value() == "foo" );
+                CHECK(item.value() == "foo");
             }
-            else if (item.key() == "1" )
+            else if (item.key() == "1")
             {
-                CHECK( item.value() == "bar" );
+                CHECK(item.value() == "bar");
             }
             else
             {
-                CHECK( false );
+                CHECK(false);
             }
         }
     }
@@ -273,14 +277,14 @@ TEST_CASE("alternative string type")
         doc["Who are you?"] = "I'm Batman";
 
         CHECK("I'm Batman" == doc["Who are you?"]);
-        CHECK(doc["Who are you?"]  == "I'm Batman");
+        CHECK(doc["Who are you?"] == "I'm Batman");
         CHECK_FALSE("I'm Batman" != doc["Who are you?"]);
-        CHECK_FALSE(doc["Who are you?"]  != "I'm Batman");
+        CHECK_FALSE(doc["Who are you?"] != "I'm Batman");
 
         CHECK("I'm Bruce Wayne" != doc["Who are you?"]);
-        CHECK(doc["Who are you?"]  != "I'm Bruce Wayne");
+        CHECK(doc["Who are you?"] != "I'm Bruce Wayne");
         CHECK_FALSE("I'm Bruce Wayne" == doc["Who are you?"]);
-        CHECK_FALSE(doc["Who are you?"]  == "I'm Bruce Wayne");
+        CHECK_FALSE(doc["Who are you?"] == "I'm Bruce Wayne");
 
         {
             const alt_json& const_doc = doc;

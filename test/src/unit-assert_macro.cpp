@@ -38,7 +38,11 @@ SOFTWARE.
 static int assert_counter;
 
 /// set failure variable to true instead of calling assert(x)
-#define JSON_ASSERT(x) {if (!(x)) ++assert_counter; }
+#define JSON_ASSERT(x)        \
+    {                         \
+        if (!(x))             \
+            ++assert_counter; \
+    }
 
 #include <nlohmann/json.hpp>
 using nlohmann::json;

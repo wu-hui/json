@@ -43,42 +43,42 @@ TEST_CASE("hash")
     std::set<std::size_t> hashes;
 
     // null
-    hashes.insert(std::hash<json> {}(json(nullptr)));
+    hashes.insert(std::hash<json>{}(json(nullptr)));
 
     // boolean
-    hashes.insert(std::hash<json> {}(json(true)));
-    hashes.insert(std::hash<json> {}(json(false)));
+    hashes.insert(std::hash<json>{}(json(true)));
+    hashes.insert(std::hash<json>{}(json(false)));
 
     // string
-    hashes.insert(std::hash<json> {}(json("")));
-    hashes.insert(std::hash<json> {}(json("foo")));
+    hashes.insert(std::hash<json>{}(json("")));
+    hashes.insert(std::hash<json>{}(json("foo")));
 
     // number
-    hashes.insert(std::hash<json> {}(json(0)));
-    hashes.insert(std::hash<json> {}(json(unsigned(0))));
+    hashes.insert(std::hash<json>{}(json(0)));
+    hashes.insert(std::hash<json>{}(json(unsigned(0))));
 
-    hashes.insert(std::hash<json> {}(json(-1)));
-    hashes.insert(std::hash<json> {}(json(0.0)));
-    hashes.insert(std::hash<json> {}(json(42.23)));
+    hashes.insert(std::hash<json>{}(json(-1)));
+    hashes.insert(std::hash<json>{}(json(0.0)));
+    hashes.insert(std::hash<json>{}(json(42.23)));
 
     // array
-    hashes.insert(std::hash<json> {}(json::array()));
-    hashes.insert(std::hash<json> {}(json::array({1, 2, 3})));
+    hashes.insert(std::hash<json>{}(json::array()));
+    hashes.insert(std::hash<json>{}(json::array({1, 2, 3})));
 
     // object
-    hashes.insert(std::hash<json> {}(json::object()));
-    hashes.insert(std::hash<json> {}(json::object({{"foo", "bar"}})));
+    hashes.insert(std::hash<json>{}(json::object()));
+    hashes.insert(std::hash<json>{}(json::object({{"foo", "bar"}})));
 
     // binary
-    hashes.insert(std::hash<json> {}(json::binary({})));
-    hashes.insert(std::hash<json> {}(json::binary({}, 0)));
-    hashes.insert(std::hash<json> {}(json::binary({}, 42)));
-    hashes.insert(std::hash<json> {}(json::binary({1, 2, 3})));
-    hashes.insert(std::hash<json> {}(json::binary({1, 2, 3}, 0)));
-    hashes.insert(std::hash<json> {}(json::binary({1, 2, 3}, 42)));
+    hashes.insert(std::hash<json>{}(json::binary({})));
+    hashes.insert(std::hash<json>{}(json::binary({}, 0)));
+    hashes.insert(std::hash<json>{}(json::binary({}, 42)));
+    hashes.insert(std::hash<json>{}(json::binary({1, 2, 3})));
+    hashes.insert(std::hash<json>{}(json::binary({1, 2, 3}, 0)));
+    hashes.insert(std::hash<json>{}(json::binary({1, 2, 3}, 42)));
 
     // discarded
-    hashes.insert(std::hash<json> {}(json(json::value_t::discarded)));
+    hashes.insert(std::hash<json>{}(json(json::value_t::discarded)));
 
     CHECK(hashes.size() == 21);
 }
