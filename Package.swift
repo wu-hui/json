@@ -13,11 +13,12 @@ let package = Package(
 
   targets: [
     .target(
-      name: "nanopb",
+      name: "nlohmann_json",
       path: ".",
       sources: [
+      	"spm_build.cc"
       ],
-      publicHeadersPath: "single_include",
-    ),
+      publicHeadersPath: "single_include"
+    )
   ]
 )
